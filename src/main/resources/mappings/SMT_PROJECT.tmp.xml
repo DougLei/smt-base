@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<table name="SMT_PROJECT" createMode="create" strict="true">
+		<columns>
+			<column name="ID" property="id" dataType="number" length="10" />
+			<column name="PARENT_ID" property="parentId" dataType="number" length="10" />
+			<column name="CODE" property="code" dataType="string" length="50" nullable="false"/>
+			<column name="LEVEL_" property="level" dataType="string" length="60" nullable="false"/>
+			<column name="NAME" property="name" dataType="nstring" length="100" nullable="false"/>
+			<column name="DESCRIPTION" property="description" dataType="nstring" length="200"/>
+			<column name="TYPE" property="type" dataType="number" length="1" nullable="false"/>
+			<column name="STATE" property="state" dataType="number" length="1" nullable="false"/>
+			<column name="CREATE_USER_ID" property="createUserId" dataType="char" length="36" nullable="false"/>
+			<column name="CREATE_DATE" property="createDate" dataType="datetime" nullable="false"/>
+			<column name="TENANT_ID" property="tenantId" dataType="char" length="36" nullable="false"/>
+			<column name="BUFFER_ID" property="bufferId" dataType="char" length="36" nullable="false"/>
+			<column name="AUTH_CODE" property="authCode" dataType="char" length="36" nullable="false"/>
+		</columns>
+		
+		<constraints>
+			<constraint type="PRIMARY_KEY" isAutoIncrement="true">
+				<column name="ID" />
+			</constraint>
+		</constraints>
+	</table>
+</mapping-configuration>
