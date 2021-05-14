@@ -38,6 +38,11 @@ public class AccountController {
 	@RequestMapping(value = "/token/validate/{token}", method = RequestMethod.GET)
 	public TokenValidateResult validate(@PathVariable String token) {
 		// TODO 临时验证空对象
-		return new TokenValidateResult(new TokenEntity());
+		TokenEntity entity = new TokenEntity();
+		entity.setAccountId("accountId");
+		entity.setUserId("userId");
+		entity.setProjectCode("projectCode");
+		entity.setTenantId("tenantId");
+		return new TokenValidateResult(entity);
 	}
 }

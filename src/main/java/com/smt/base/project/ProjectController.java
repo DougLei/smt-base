@@ -32,7 +32,6 @@ public class ProjectController {
 	@LoggingResponse
 	@RequestMapping(value="/insert", method=RequestMethod.POST)
 	public Response insert(@RequestBody Project project) {
-		project.setCreateDate(new Date());
 		return service.insert(project);
 	}
 
