@@ -10,7 +10,7 @@ jdb:
 spring:
   datasource:
         type: com.alibaba.druid.pool.DruidDataSource
-        url: jdbc:sqlserver://localhost:1433;DatabaseName=SMT_BASE
+        url: jdbc:sqlserver://localhost:1433;DatabaseName=SMT_ALL
         username: sa
         password: root
   application: 
@@ -33,4 +33,4 @@ smt:
 eureka:
   client:
     service-url:
-      defaultZone: http://192.168.1.111:8101/eureka/
+      defaultZone: http://192.168.1.252:8501/eureka/

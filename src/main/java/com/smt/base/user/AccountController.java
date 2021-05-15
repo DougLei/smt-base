@@ -39,10 +39,10 @@ public class AccountController {
 	public TokenValidateResult validate(@PathVariable String token) {
 		// TODO 临时验证空对象
 		TokenEntity entity = new TokenEntity();
-		entity.setAccountId("accountId");
-		entity.setUserId("userId");
+		entity.setAccountId("accountId111111111111111111111111111");
+		entity.setUserId("userId111111111111111111111111111111");
 		entity.setProjectCode("projectCode");
-		entity.setTenantId("tenantId");
+		entity.setTenantId("tenantId1111111111111111111111111111");
 		return new TokenValidateResult(entity);
 	}
 }

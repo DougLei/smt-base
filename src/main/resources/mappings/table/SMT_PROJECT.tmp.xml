@@ -5,7 +5,7 @@
 			<column name="ID" property="id" dataType="number" length="10" />
 			<column name="PARENT_ID" property="parentId" dataType="number" length="10" />
 			<column name="ROOT_ID" property="rootId" dataType="number" length="10" />
-			<column name="LEVEL_" property="level" dataType="number" length="2" defaultValue="0" nullable="false"/>
+			<column name="LEVEL_" property="level" dataType="number" length="2" nullable="false"/>
 			<column name="CODE" property="code" dataType="string" length="50" nullable="false"/>
 			<column name="NAME" property="name" dataType="nstring" length="100" nullable="false"/>
 			<column name="DESCRIPTION" property="description" dataType="nstring" length="200"/>
@@ -21,6 +21,9 @@
 		<constraints>
 			<constraint type="PRIMARY_KEY" isAutoIncrement="true">
 				<column name="ID" />
+			</constraint>
+			<constraint type="DEFAULT_VALUE" defaultValue="0">
+				<column name="LEVEL_" />
 			</constraint>
 		</constraints>
 	</table>

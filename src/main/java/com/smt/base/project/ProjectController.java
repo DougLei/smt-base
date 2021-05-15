@@ -7,9 +7,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.smt.base.project.entity.Project;
-import com.smt.parent.code.filters.token.TokenContext;
-import com.smt.parent.code.filters.token.TokenEntity;
+import com.smt.base.project.entity.ProjectBuilder;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
 
@@ -26,29 +24,24 @@ public class ProjectController {
 	
 	/**
 	 * 插入项目
-	 * @param project
+	 * @param builder
 	 * @return
 	 */
 	@LoggingResponse
 	@RequestMapping(value="/insert", method=RequestMethod.POST)
-	public Response insert(@RequestBody Project project) {
-		TokenEntity token = TokenContext.get();
-		project.setCreateUserId(token.getUserId());
-		project.setCreateDate(token.getCurrentDate());
-		project.setTenantId(token.getTenantId());
-		return service.insert(project);
+	public Response insert(@RequestBody ProjectBuilder builder) {
+		return service.insert(builder);
 	}
 
 	/**
 	 * 修改项目
-	 * @param project
+	 * @param builder
 	 * @return
 	 */
 	@LoggingResponse
 	@RequestMapping(value="/update", method=RequestMethod.POST)
-	public Response update(@RequestBody Project project) {
-		project.setTenantId(TokenContext.get().getTenantId());
-		return service.update(project);
+	public Response update(@RequestBody ProjectBuilder builder) {
+		return service.update(builder);
 	}
 	
 	/**

@@ -4,7 +4,7 @@
 	
 		<!-- 验证项目code -->
 		<content name="validateCode" type="select">
-			select id from smt_project where tenant_id = #{tenantId} and code=#{code} 
+			select id from smt_project where tenant_id = #{tenantId} and code=#{code} and 
 			<switch>
 				<if test="parentId == null">
 					parent_id is null 

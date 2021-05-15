@@ -13,9 +13,9 @@ public class Project {
 	private Integer level;
 	private String code;
 	private String name;
-	private String description;
 	private Type type;
 	private State state;
+	private String description;
 	private String createUserId;
 	private Date createDate;
 	private String tenantId;
@@ -58,12 +58,6 @@ public class Project {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
 	public Type getTypeInstance() {
 		return type;
 	}
@@ -87,6 +81,12 @@ public class Project {
 	}
 	public void setState(int state) {
 		this.state = State.valueOf(state);
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	public String getCreateUserId() {
 		return createUserId;

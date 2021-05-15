@@ -8,6 +8,7 @@ import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.smt.base.project.entity.Project;
+import com.smt.base.project.entity.ProjectBuilder;
 import com.smt.base.project.entity.State;
 import com.smt.parent.code.response.Response;
 
@@ -20,11 +21,13 @@ public class ProjectService {
 	
 	/**
 	 * 添加
-	 * @param project
+	 * @param builder
 	 * @return
 	 */
 	@Transaction
-	public Response insert(Project project) {
+	public Response insert(ProjectBuilder builder) {
+		Project project = builder.build4Insert();
+		
 		// 计算并设置根项目id, 层级
 		if(project.getParentId() != null) {
 			Project parent = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from smt_project where id=?", Arrays.asList(project.getParentId()));
@@ -37,37 +40,37 @@ public class ProjectService {
 		
 		Project exists = SessionContext.getSQLSession().uniqueQuery(Project.class, "Project", "validateCode", project);
 		if(exists != null)
-			return new Response(project, "code", "已存在编码为[%s]的项目", "smt.base.project.insert.fail.code.exists", project.getCode());
+			return new Response(builder, "code", "已存在编码为[%s]的项目", "smt.base.project.insert.fail.code.exists", project.getCode());
 		
 		SessionContext.getTableSession().save(project);
-		return new Response(project);
+		return new Response(builder);
 	}
 	
 	/**
 	 * 修改
-	 * @param project
+	 * @param builder
 	 * @return
 	 */
 	@Transaction
-	public Response update(Project project) {
-		Project old = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from bpm_re_proctype where id=?", Arrays.asList(project.getId()));
+	public Response update(ProjectBuilder builder) {
+		Project old = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from smt_project where id=?", Arrays.asList(builder.getId()));
 		if(old == null)
-			throw new ProjectException("修改失败, 不存在id为["+project.getId()+"]的项目");
+			throw new ProjectException("修改失败, 不存在id为["+builder.getId()+"]的项目");
+		
+		Project project = builder.build4Update(old);
 		if(!project.getTenantId().equals(old.getTenantId()))
 			throw new ProjectException("修改失败, 禁止修改项目关联的租户");
 		if(project.getParentId() != old.getParentId())
 			throw new ProjectException("修改失败, 禁止修改项目关联的父项目");
 		
 		if(!project.getCode().equals(old.getCode())) {
-			project.setRootId(old.getRootId());
-			
 			Project exists = SessionContext.getSQLSession().uniqueQuery(Project.class, "Project", "validateCode", project);
 			if(exists != null && exists.getId() != project.getId())
-				return new Response(project, "code", "已存在编码为[%s]的项目", "smt.base.project.insert.fail.code.exists", project.getCode());
+				return new Response(builder, "code", "已存在编码为[%s]的项目", "smt.base.project.insert.fail.code.exists", project.getCode());
 		}
 		
 		SessionContext.getTableSession().update(project);
-		return new Response(project);
+		return new Response(builder);
 	}
 	
 	/**
