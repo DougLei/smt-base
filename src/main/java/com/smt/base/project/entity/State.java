@@ -9,12 +9,27 @@ public enum State {
 	/**
 	 * 启用: 0
 	 */
-	ENABLED(0),
+	ENABLED(0){
+		@Override
+		public boolean supportDisable() {
+			return true;
+		}
+	},
 	
 	/**
 	 * 禁用: 1
 	 */
-	DISABLED(1);
+	DISABLED(1){
+		@Override
+		public boolean supportEnable() {
+			return true;
+		}
+	},
+	
+	/**
+	 * 删除: 2
+	 */
+	DELETED(2);
 	
 	// ---------------------------------------------------------------
 	private int value;
@@ -28,6 +43,22 @@ public enum State {
 	 */
 	public int getValue() {
 		return value;
+	}
+	
+	/**
+	 * 是否支持启用操作, 默认为false
+	 * @return
+	 */
+	public boolean supportEnable() {
+		return false;
+	}
+
+	/**
+	 * 是否支持禁用操作, 默认为false
+	 * @return
+	 */
+	public boolean supportDisable() {
+		return false;
 	}
 	
 	/**

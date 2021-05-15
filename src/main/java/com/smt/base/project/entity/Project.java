@@ -8,9 +8,10 @@ import java.util.Date;
  */
 public class Project {
 	private int id;
-	private int parentId;
+	private Integer parentId;
+	private Integer rootId;
+	private Integer level;
 	private String code;
-	private String level;
 	private String name;
 	private String description;
 	private Type type;
@@ -27,10 +28,10 @@ public class Project {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getParentId() {
+	public Integer getParentId() {
 		return parentId;
 	}
-	public void setParentId(int parentId) {
+	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
 	}
 	public String getCode() {
@@ -39,10 +40,16 @@ public class Project {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public String getLevel() {
+	public Integer getRootId() {
+		return rootId;
+	}
+	public void setRootId(Integer rootId) {
+		this.rootId = rootId;
+	}
+	public Integer getLevel() {
 		return level;
 	}
-	public void setLevel(String level) {
+	public void setLevel(Integer level) {
 		this.level = level;
 	}
 	public String getName() {
