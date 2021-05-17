@@ -23,12 +23,11 @@ public class ProjectBuilder {
 		project.setName(name);
 		project.setType(type);
 		project.setDescription(description);
-		
 		return project;
 	}
 	
 	/**
-	 * 
+	 * insert时构建Project实例
 	 * @return
 	 */
 	public Project build4Insert() {
@@ -43,7 +42,7 @@ public class ProjectBuilder {
 	}
 	
 	/**
-	 * 
+	 * update时构建Project实例
 	 * @param old
 	 * @return
 	 */

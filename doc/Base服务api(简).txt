@@ -39,6 +39,92 @@ http://192.168.1.111:8502/project/delete/{projectId}
 DELETE
 
 
+*********************************************************************************
+用户管理
+*********************************************************************************
+
+--添加
+http://192.168.1.111:8502/user/insert
+POST
+{
+	"nikeName":"", --昵称, 租户下唯一
+	"realName":"", --真实姓名
+	"sex":1/2, -- 性别, 1男, 2女
+	"phoneNum":"", -- 手机号码
+	"email":"", -- 邮箱
+	"loginName":"", -- 开通的账户的登录名, 可不传, 默认为nikeName
+	"loginPwd":"" -- 开通的账户的登录密码, 可不传, 默认为111111
+}
+
+--修改
+http://192.168.1.111:8502/user/update
+POST
+{
+	"id":"", --主键
+	"nikeName":"", --昵称, 租户下唯一
+	"realName":"", --真实姓名
+	"sex":1/2, -- 性别, 1男, 2女
+	"phoneNum":"", -- 手机号码
+	"email":"" -- 邮箱
+}
+
+--删除
+http://192.168.1.111:8502/user/delete/{userId}
+DELETE
+
+--开通账户
+http://192.168.1.111:8502/user/account/open
+POST
+{
+	"userId":"", -- 用户id
+	"loginName":"", -- 账户的登录名, 可不传, 默认为User的nikeName
+	"loginPwd":"" -- 账户的登录密码, 可不传, 默认为666
+}
+
+--启用账户
+http://192.168.1.111:8502/user/account/enable
+POST
+{
+	"id":"" -- 账户id
+}
+
+--禁用账户
+http://192.168.1.111:8502/user/account/disable
+POST
+{
+	"id":"", -- 账户id
+	"disableReason": -- 禁用原因
+}
+
+--删除账户
+http://192.168.1.111:8502/user/account/delete/{accountId}
+DELETE
+
+--修改账户的登录名和登录密码
+http://192.168.1.111:8502/user/account/name_pwd/update
+POST
+{
+	"id":"", -- 账户id
+	"loginName":"", -- 账户的登录名
+	"loginPwd":"" -- 账户的登录密码
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

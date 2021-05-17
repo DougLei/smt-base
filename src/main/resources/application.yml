@@ -24,10 +24,13 @@ smt:
           access-control-allow-methods: GET,POST,PUT,DELETE
           access-control-allow-headers: Origin, X-Requested-With, Content-Type, Accept, _log, token
           access-control-max-age: 1800
+        log:
+          ignore-url-patterns:
+          - /user/token/validate/*
         token:
           ignore-url-patterns:
-          - /account/login
-          - /account/token/validate/*
+          - /user/login
+          - /user/token/validate/*
 
 # 指定该服务要注册进指定url的服务注册中心  
 eureka:
