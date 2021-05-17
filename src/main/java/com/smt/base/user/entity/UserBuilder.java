@@ -58,7 +58,7 @@ public class UserBuilder {
 	public User build4Update() {
 		User user = build();
 		user.setId(id);
-		
+		user.setTenantId(TokenContext.get().getTenantId());
 		return user;
 	}
 	

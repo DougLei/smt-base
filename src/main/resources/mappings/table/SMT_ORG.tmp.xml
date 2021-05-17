@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping-configuration>
-	<table name="SMT_ORG" createMode="create" strict="true">
+	<table name="BASE_ORG" createMode="create" strict="true">
 		<columns>
 			<column name="ID" property="id" dataType="number" length="10" />
 			<column name="PARENT_ID" property="parentId" dataType="number" length="10" />

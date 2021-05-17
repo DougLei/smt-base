@@ -27,13 +27,13 @@ public class UserService {
 	// 验证NikeName是否存在
 	private boolean nikeNameExists(User user) {
 		return Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_(
-					"select count(1) from smt_user where nike_name=? and tenant_id=?", 
+					"select count(1) from base_user where nike_name=? and tenant_id=?", 
 					Arrays.asList(user.getNikeName(), user.getTenantId()))[0].toString()) > 0;
 	}
 	// 验证LoginName是否存在
 	private boolean loginNameExists(Account account) {
 		return Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_(
-					"select count(1) from smt_account where login_name=? and tenant_id=?", 
+					"select count(1) from base_account where login_name=? and tenant_id=?", 
 					Arrays.asList(account.getLoginName(), account.getTenantId()))[0].toString()) > 0;
 	}
 	
@@ -69,7 +69,7 @@ public class UserService {
 	 */
 	@Transaction
 	public Response update(UserBuilder builder) {
-		User old = SessionContext.getTableSession().uniqueQuery(User.class, "select * from smt_user where id=?", Arrays.asList(builder.getId()));
+		User old = SessionContext.getTableSession().uniqueQuery(User.class, "select * from base_user where id=?", Arrays.asList(builder.getId()));
 		if(old == null)
 			throw new SmtBaseException("修改失败, 不存在id为["+builder.getId()+"]的用户");
 		
@@ -88,17 +88,17 @@ public class UserService {
 	 */
 	@Transaction
 	public Response delete(String userId) {
-		User user = SessionContext.getTableSession().uniqueQuery(User.class, "select * from smt_user where id=?", Arrays.asList(userId));
+		User user = SessionContext.getTableSession().uniqueQuery(User.class, "select * from base_user where id=?", Arrays.asList(userId));
 		if(user == null)
 			throw new SmtBaseException("删除失败, 不存在id为["+userId+"]的用户");
 		
 		// 如果存在账号, 则将账号删除
-		Object[] account = SessionContext.getSqlSession().uniqueQuery_("select id from smt_account where user_id=?", Arrays.asList(userId));
+		Object[] account = SessionContext.getSqlSession().uniqueQuery_("select id from base_account where user_id=?", Arrays.asList(userId));
 		if(account != null)
-			SessionContext.getSqlSession().executeUpdate("delete smt_account where id=?", Arrays.asList(account[0]));
+			SessionContext.getSqlSession().executeUpdate("delete base_account where id=?", Arrays.asList(account[0]));
 		
 		// 用户信息置于删除状态
-		SessionContext.getSqlSession().executeUpdate("update smt_user set is_deleted=1 where id=?", Arrays.asList(userId));
+		SessionContext.getSqlSession().executeUpdate("update base_user set is_deleted=1 where id=?", Arrays.asList(userId));
 		return new Response(userId);
 	}
 	
@@ -113,7 +113,11 @@ public class UserService {
 		if(account != null) 
 			return new Response(builder.getUserId(), null, "用户已开通账户", "smt.base.user.fail.account.opened");
 				
-		account = builder.build(SessionContext.getSqlSession().uniqueQuery(User.class, "select * from smt_user where id=?", Arrays.asList(builder.getUserId())));	
+		User user = SessionContext.getSqlSession().uniqueQuery(User.class, "select * from base_user where id=?", Arrays.asList(builder.getUserId()));
+		if(user.getIsDeleted() == 1)
+			throw new SmtBaseException("禁止给删除状态的用户["+builder.getUserId()+"]开通账户");
+		
+		account = builder.build(user);	
 		if(loginNameExists(account))
 			return new Response(builder.getUserId(), "loginName", "登录名[%s]已被使用", "smt.base.user.fail.loginname.exists", account.getLoginName());
 			 
@@ -134,7 +138,7 @@ public class UserService {
 		if(account.getIsDisabled() == 0)
 			return new Response(builder.getId(), null, "启用账户失败, 账户处于激活状态", "smt.base.user.fail.account.isenabled");
 		
-		SessionContext.getSqlSession().executeUpdate("update smt_account set is_disabled=0, disable_user_id=null, disable_date=null, disable_reason=null where id=?", Arrays.asList(builder.getId()));
+		SessionContext.getSqlSession().executeUpdate("update base_account set is_disabled=0, disable_user_id=null, disable_date=null, disable_reason=null where id=?", Arrays.asList(builder.getId()));
 		return new Response(builder.getId());
 	}
 	
@@ -152,7 +156,7 @@ public class UserService {
 			return new Response(builder.getId(), null, "禁用账户失败, 账户处于禁用状态", "smt.base.user.fail.account.isdisabled");
 		
 		SessionContext.getSqlSession().executeUpdate(
-				"update smt_account set is_disabled=1, disable_user_id=?, disable_date=?, disable_reason=? where id=?", 
+				"update base_account set is_disabled=1, disable_user_id=?, disable_date=?, disable_reason=? where id=?", 
 				Arrays.asList(TokenContext.get().getUserId(), new Date(), builder.getDisableReason(), builder.getId()));
 		return new Response(builder.getId());
 	}
@@ -168,7 +172,7 @@ public class UserService {
 		if(account == null)
 			throw new SmtBaseException("删除账户失败, 不存在id为["+id+"]的账户");
 		
-		SessionContext.getSqlSession().executeUpdate("delete smt_account where id=?", Arrays.asList(id));
+		SessionContext.getSqlSession().executeUpdate("delete base_account where id=?", Arrays.asList(id));
 		return new Response(id);
 	}
 	
@@ -202,7 +206,7 @@ public class UserService {
 		
 		if(flag > 0)
 			SessionContext.getSqlSession().executeUpdate(
-					"update smt_account set login_name=?, login_pwd=? where id=?", 
+					"update base_account set login_name=?, login_pwd=? where id=?", 
 					Arrays.asList(account.getLoginName(), account.getLoginPwd(), account.getId()));
 		return new Response(builder.getId()); 
 	}

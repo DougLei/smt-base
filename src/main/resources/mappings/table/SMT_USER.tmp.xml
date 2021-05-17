@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping-configuration>
-	<table name="SMT_USER" class="com.smt.base.user.entity.User" createMode="create" strict="true">
+	<table name="BASE_USER" class="com.smt.base.user.entity.User" createMode="create" strict="true">
 		<columns>
 			<column name="ID" property="id" dataType="char" length="36" />
 			<column name="TYPE" property="type" dataType="number" length="1" nullable="false"/>

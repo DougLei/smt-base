@@ -31,7 +31,7 @@ public class ProjectService {
 		
 		// 计算并设置根项目id, 层级
 		if(project.getParentId() != null) {
-			Project parent = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from smt_project where id=?", Arrays.asList(project.getParentId()));
+			Project parent = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from base_project where id=?", Arrays.asList(project.getParentId()));
 			if(parent == null)
 				throw new SmtBaseException("保存失败, 不存在id为["+project.getParentId()+"]的父项目");
 			if(parent.getParentId() != null)
@@ -56,7 +56,7 @@ public class ProjectService {
 	 */
 	@Transaction
 	public Response update(ProjectBuilder builder) {
-		Project old = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from smt_project where id=?", Arrays.asList(builder.getId()));
+		Project old = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from base_project where id=?", Arrays.asList(builder.getId()));
 		if(old == null)
 			throw new SmtBaseException("修改失败, 不存在id为["+builder.getId()+"]的项目");
 		
@@ -81,13 +81,13 @@ public class ProjectService {
 	 */
 	@Transaction
 	public Response enable(int projectId) {
-		Project project = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from smt_project where id=?", Arrays.asList(projectId));
+		Project project = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from base_project where id=?", Arrays.asList(projectId));
 		if(project == null)
 			throw new SmtBaseException("启用失败, 不存在id为["+projectId+"]的项目");
 		if(!project.getStateInstance().supportEnable())
 			return new Response(null, null, "项目处于[%s]状态, 无法启用", "smt.base.project.enable.fail.state.error", project.getStateInstance());
 		
-		SessionContext.getSqlSession().executeUpdate("update smt_project set state=? where id=?", Arrays.asList(State.ENABLED.getValue(), projectId));
+		SessionContext.getSqlSession().executeUpdate("update base_project set state=? where id=?", Arrays.asList(State.ENABLED.getValue(), projectId));
 		return new Response(projectId);
 	}
 	
@@ -98,18 +98,18 @@ public class ProjectService {
 	 */
 	@Transaction
 	public Response disable(int projectId) {
-		Project project = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from smt_project where id=?", Arrays.asList(projectId));
+		Project project = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from base_project where id=?", Arrays.asList(projectId));
 		if(project == null)
 			throw new SmtBaseException("禁用失败, 不存在id为["+projectId+"]的项目");
 		if(!project.getStateInstance().supportDisable())
 			return new Response(null, null, "项目处于[%s]状态, 无法禁用", "smt.base.project.disable.fail.state.error", project.getStateInstance());
 		
 		int childrenCount = Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_(
-				"select count(id) from smt_project where parent_id=? and state=?", Arrays.asList(projectId, State.ENABLED.getValue()))[0].toString());
+				"select count(id) from base_project where parent_id=? and state=?", Arrays.asList(projectId, State.ENABLED.getValue()))[0].toString());
 		if(childrenCount > 0)
 			return new Response(null, null, "项目下存在[%d]个处于启用状态的子项目, 无法禁用", "smt.base.project.disable.fail.children.exists", childrenCount);
 		
-		SessionContext.getSqlSession().executeUpdate("update smt_project set state=? where id=?", Arrays.asList(State.DISABLED.getValue(), projectId));
+		SessionContext.getSqlSession().executeUpdate("update base_project set state=? where id=?", Arrays.asList(State.DISABLED.getValue(), projectId));
 		return new Response(projectId);
 	}
 	
@@ -120,7 +120,7 @@ public class ProjectService {
 	 */
 	@Transaction
 	public Response delete(int projectId) {
-		Project project = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from smt_project where id=?", Arrays.asList(projectId));
+		Project project = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from base_project where id=?", Arrays.asList(projectId));
 		if(project == null)
 			throw new SmtBaseException("删除失败, 不存在id为["+projectId+"]的项目");
 		if(project.getStateInstance() != State.DISABLED)
@@ -129,7 +129,7 @@ public class ProjectService {
 		// 递归获取子项目id, 统一删除
 		List<Object> ids = new ArrayList<Object>();
 		ids.add(projectId);
-		recursiveQueryChildrenIds(SessionContext.getSqlSession().query_("select id from smt_project where parent_id=?", Arrays.asList(projectId)), ids);
+		recursiveQueryChildrenIds(SessionContext.getSqlSession().query_("select id from base_project where parent_id=?", Arrays.asList(projectId)), ids);
 		SessionContext.getSQLSession().executeUpdate("Project", "deleteProject", ids);
 		return new Response(projectId);
 	}

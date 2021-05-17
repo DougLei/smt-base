@@ -15,7 +15,6 @@ public class Account {
 	private String disableUserId;
 	private Date disableDate;
 	private String disableReason;
-	private String remark;
 	private String userId;
 	private String openUserId;
 	private Date openDate;
@@ -68,12 +67,6 @@ public class Account {
 	}
 	public void setDisableReason(String disableReason) {
 		this.disableReason = disableReason;
-	}
-	public String getRemark() {
-		return remark;
-	}
-	public void setRemark(String remark) {
-		this.remark = remark;
 	}
 	public String getUserId() {
 		return userId;

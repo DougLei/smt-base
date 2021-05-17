@@ -34,7 +34,7 @@ public class AccountBuilder {
 	 * @return
 	 */
 	public Account getById() {
-		return SessionContext.getSqlSession().uniqueQuery(Account.class, "select * from smt_account where id=?", Arrays.asList(id));
+		return SessionContext.getSqlSession().uniqueQuery(Account.class, "select * from base_account where id=?", Arrays.asList(id));
 	}
 	
 	/**
@@ -42,7 +42,7 @@ public class AccountBuilder {
 	 * @return
 	 */
 	public Account getByUserId() {
-		return SessionContext.getSqlSession().uniqueQuery(Account.class, "select * from smt_account where user_id=?", Arrays.asList(userId));
+		return SessionContext.getSqlSession().uniqueQuery(Account.class, "select * from base_account where user_id=?", Arrays.asList(userId));
 	}
 
 	/**

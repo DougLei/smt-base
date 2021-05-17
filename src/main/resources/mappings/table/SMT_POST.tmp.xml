@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping-configuration>
-	<table name="SMT_POST" createMode="create" strict="true">
+	<table name="BASE_POST" createMode="create" strict="true">
 		<columns>
 			<column name="ID" property="id" dataType="number" length="10" />
 			<column name="CODE" property="code" dataType="string" length="50" nullable="false"/>

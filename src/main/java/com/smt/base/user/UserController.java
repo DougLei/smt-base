@@ -44,7 +44,7 @@ public class UserController {
 	 * @param token
 	 * @return
 	 */
-	@RequestMapping(value = "/token/validate/{token}", method = RequestMethod.POST)
+	@RequestMapping(value = "/token/validate/{token}", method = RequestMethod.GET)
 	public TokenValidateResult validate(@PathVariable String token) {
 		// TODO 临时验证空对象
 		TokenEntity entity = new TokenEntity();
