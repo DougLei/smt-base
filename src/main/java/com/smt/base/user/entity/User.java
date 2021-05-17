@@ -11,7 +11,7 @@ public class User {
 	private int type; 
 	private String nikeName;
 	private String realName;
-	private Integer sex;
+	private Integer sex; // 性别: 1(男), 2(女)
 	private String phoneNum;
 	private String email;
 	private int isDeleted;

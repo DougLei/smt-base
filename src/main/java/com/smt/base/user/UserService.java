@@ -70,7 +70,7 @@ public class UserService {
 	@Transaction
 	public Response update(UserBuilder builder) {
 		User old = SessionContext.getTableSession().uniqueQuery(User.class, "select * from base_user where id=?", Arrays.asList(builder.getId()));
-		if(old == null)
+		if(old == null || old.getIsDeleted() == 1)
 			throw new SmtBaseException("修改失败, 不存在id为["+builder.getId()+"]的用户");
 		
 		User user = builder.build4Update();
@@ -89,7 +89,7 @@ public class UserService {
 	@Transaction
 	public Response delete(String userId) {
 		User user = SessionContext.getTableSession().uniqueQuery(User.class, "select * from base_user where id=?", Arrays.asList(userId));
-		if(user == null)
+		if(user == null || user.getIsDeleted() == 1)
 			throw new SmtBaseException("删除失败, 不存在id为["+userId+"]的用户");
 		
 		// 如果存在账号, 则将账号删除
@@ -109,14 +109,14 @@ public class UserService {
 	 */
 	@Transaction
 	public Response openAccount(AccountBuilder builder) {
-		Account account = builder.getByUserId();
-		if(account != null) 
-			return new Response(builder.getUserId(), null, "用户已开通账户", "smt.base.user.fail.account.opened");
-				
 		User user = SessionContext.getSqlSession().uniqueQuery(User.class, "select * from base_user where id=?", Arrays.asList(builder.getUserId()));
 		if(user.getIsDeleted() == 1)
 			throw new SmtBaseException("禁止给删除状态的用户["+builder.getUserId()+"]开通账户");
 		
+		Account account = builder.getByUserId();
+		if(account != null) 
+			return new Response(builder.getUserId(), null, "用户已开通账户", "smt.base.user.fail.account.opened");
+				
 		account = builder.build(user);	
 		if(loginNameExists(account))
 			return new Response(builder.getUserId(), "loginName", "登录名[%s]已被使用", "smt.base.user.fail.loginname.exists", account.getLoginName());

@@ -22,9 +22,6 @@
 			<constraint type="PRIMARY_KEY" isAutoIncrement="true">
 				<column name="ID" />
 			</constraint>
-			<constraint type="DEFAULT_VALUE" defaultValue="0">
-				<column name="LEVEL_" />
-			</constraint>
 		</constraints>
 	</table>
 </mapping-configuration>

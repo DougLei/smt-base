@@ -7,58 +7,28 @@ package com.smt.base.project.entity;
 public enum State {
 	
 	/**
-	 * 启用: 0
+	 * 启用: 1
 	 */
-	ENABLED(0){
-		@Override
-		public boolean supportDisable() {
-			return true;
-		}
-	},
+	ENABLED(1),
 	
 	/**
-	 * 禁用: 1
+	 * 禁用: 2
 	 */
-	DISABLED(1){
-		@Override
-		public boolean supportEnable() {
-			return true;
-		}
-	},
+	DISABLED(2),
 	
 	/**
-	 * 删除: 2
+	 * 删除: 3
 	 */
-	DELETED(2);
+	DELETED(3);
 	
 	// ---------------------------------------------------------------
-	private int value;
+	private int value; // 状态值
 	private State(int value) {
 		this.value = value;
 	}
-	
-	/**
-	 * 获取标识值
-	 * @return
-	 */
+
 	public int getValue() {
 		return value;
-	}
-	
-	/**
-	 * 是否支持启用操作, 默认为false
-	 * @return
-	 */
-	public boolean supportEnable() {
-		return false;
-	}
-
-	/**
-	 * 是否支持禁用操作, 默认为false
-	 * @return
-	 */
-	public boolean supportDisable() {
-		return false;
 	}
 	
 	/**

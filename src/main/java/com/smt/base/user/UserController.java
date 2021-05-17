@@ -55,6 +55,29 @@ public class UserController {
 		return new TokenValidateResult(entity);
 	}
 	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	// ------------------------------------------------------------------------------------------------------
 	/**
 	 * 添加用户
 	 * @param builder
@@ -89,6 +112,7 @@ public class UserController {
 		return service.delete(userId);
 	}
 	
+	// ------------------------------------------------------------------------------------------------------
 	/**
 	 * 开通账户
 	 * @param builder

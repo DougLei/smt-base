@@ -12,7 +12,7 @@ public class ProjectBuilder {
 	private Integer parentId;
 	private String code;
 	private String name;
-	private Integer type;
+	private int type;
 	private String description;
 	
 	// 构建Project实例, 设置基础数据
@@ -81,10 +81,10 @@ public class ProjectBuilder {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public Integer getType() {
+	public int getType() {
 		return type;
 	}
-	public void setType(Integer type) {
+	public void setType(int type) {
 		this.type = type;
 	}
 	public String getDescription() {
