@@ -9,7 +9,7 @@ POST
 	"parentId": 0, --父项目id, 可为null(根项目), 数字类型 
 	"code":"",
 	"name":"",
-	"type":1, -- 项目类型, 目前包含的值: 1(虚拟项目), 2(web项目), 3(触摸屏项目)
+	"isVirtual":0, -- 是否是虚拟项目, 1是0否
 	"description":""
 	
 }
@@ -22,7 +22,7 @@ POST
 	"parentId": 0, --父项目id, 可为null(根项目), 数字类型 
 	"code":"",
 	"name":"",
-	"type":1, -- 项目类型, 目前包含的值: 1(虚拟项目), 2(web项目), 3(触摸屏项目)
+	"isVirtual":0, -- 是否是虚拟项目, 1是0否
 	"description":"",
 }
 
@@ -118,8 +118,8 @@ POST
 http://192.168.1.111:8502/org/insert
 POST
 {
-	"parentId":"", --父组织机构的id, 可为null
-	"type":1/2, -- 组织机构的类型, 1公司, 2部门, 必须传入
+	"parentId":1, --父组织机构的id, 可为null
+	"type":1, -- 类型, 1(组织机构/企业), 2(部门)
 	"code":"", -- 编码
 	"name":"", -- 名称
 	"description":"", -- 描述
@@ -130,9 +130,9 @@ POST
 http://192.168.1.111:8502/org/update
 POST
 {
-	"id":"", --主键
-	"parentId":"", --父组织机构的id, 可为null
-	"type":1/2, -- 组织机构的类型, 1公司, 2部门, 必须传入
+	"id":1, --主键
+	"parentId":1, --父组织机构的id, 可为null
+	"type":1, -- 类型, 1(组织机构/企业), 2(部门)
 	"code":"", -- 编码
 	"name":"", -- 名称
 	"description":"", -- 描述

@@ -9,7 +9,7 @@
 			<column name="CODE" property="code" dataType="string" length="50" nullable="false"/>
 			<column name="NAME" property="name" dataType="nstring" length="100" nullable="false"/>
 			<column name="DESCRIPTION" property="description" dataType="nstring" length="200"/>
-			<column name="TYPE" property="type" dataType="number" length="1" nullable="false"/>
+			<column name="IS_VIRTUAL" property="isVirtual" dataType="number" length="1" nullable="false"/>
 			<column name="STATE" property="state" dataType="number" length="1" nullable="false"/>
 			<column name="CREATE_USER_ID" property="createUserId" dataType="char" length="36" nullable="false"/>
 			<column name="CREATE_DATE" property="createDate" dataType="datetime" nullable="false"/>

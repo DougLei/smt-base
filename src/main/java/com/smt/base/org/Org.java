@@ -9,7 +9,7 @@ import java.util.Date;
 public class Org {
 	private int id;
 	private Integer parentId;
-	private int type; // 类型: 1(组织机构/企业), 2(部门)
+	private Integer type; // 类型: 1(组织机构/企业), 2(部门)
 	private String code;
 	private String name;
 	private String description;

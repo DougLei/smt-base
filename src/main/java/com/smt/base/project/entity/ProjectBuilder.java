@@ -8,11 +8,11 @@ import com.smt.parent.code.filters.token.TokenEntity;
  * @author DougLei
  */
 public class ProjectBuilder {
-	private Integer id;
+	private int id;
 	private Integer parentId;
 	private String code;
 	private String name;
-	private int type;
+	private Integer isVirtual; // 是否虚拟项目, 1是0否
 	private String description;
 	
 	// 构建Project实例, 设置基础数据
@@ -21,7 +21,7 @@ public class ProjectBuilder {
 		project.setParentId(parentId);
 		project.setCode(code);
 		project.setName(name);
-		project.setType(type);
+		project.setIsVirtual(isVirtual);
 		project.setDescription(description);
 		return project;
 	}
@@ -31,7 +31,7 @@ public class ProjectBuilder {
 	 * @return
 	 */
 	public Project build4Insert() {
-		Project project =build();
+		Project project = build();
 		
 		TokenEntity token = TokenContext.get();
 		project.setStateInstance(State.ENABLED);
@@ -47,7 +47,7 @@ public class ProjectBuilder {
 	 * @return
 	 */
 	public Project build4Update(Project old) {
-		Project project =build();
+		Project project = build();
 		project.setId(id);
 		
 		project.setRootId(old.getRootId());
@@ -56,11 +56,10 @@ public class ProjectBuilder {
 		return project;
 	}
 	
-	
-	public Integer getId() {
+	public int getId() {
 		return id;
 	}
-	public void setId(Integer id) {
+	public void setId(int id) {
 		this.id = id;
 	}
 	public Integer getParentId() {
@@ -81,11 +80,11 @@ public class ProjectBuilder {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getType() {
-		return type;
+	public Integer getIsVirtual() {
+		return isVirtual;
 	}
-	public void setType(int type) {
-		this.type = type;
+	public void setIsVirtual(Integer isVirtual) {
+		this.isVirtual = isVirtual;
 	}
 	public String getDescription() {
 		return description;

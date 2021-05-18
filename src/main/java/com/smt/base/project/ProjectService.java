@@ -41,7 +41,7 @@ public class ProjectService {
 				throw new SmtBaseException("保存失败, 不存在id为["+project.getParentId()+"]的父项目");
 			if(parent.getLevel()+1 >= properties.getMaxLevel())
 				return new Response(builder, null, "项目层级不能超过[%d]层", "smt.base.project.insert.fail.level.overflow", properties.getMaxLevel());
-			if(parent.isEntity() && !project.isEntity())
+			if(parent.getIsVirtual()==0 && project.getIsVirtual()==1)
 				return new Response(builder, "type", "实体项目下不能设置虚拟项目", "smt.base.project.fail.virtual.under.entity");
 			
 			project.setRootId(parent.getRootId()==null?parent.getId():parent.getRootId());
@@ -71,16 +71,24 @@ public class ProjectService {
 		if(project.getParentId() != old.getParentId())
 			throw new SmtBaseException("修改失败, 禁止修改项目关联的父项目");
 		
+		// 判断是否修改了code
 		if(!project.getCode().equals(old.getCode())) {
 			Project exists = SessionContext.getSQLSession().uniqueQuery(Project.class, "Project", "validateCode", project);
 			if(exists != null && exists.getId() != project.getId())
 				return new Response(builder, "code", "已存在编码为[%s]的项目", "smt.base.project.fail.code.exists", project.getCode());
 		}
 		
-		
-		
-		
-		
+		// 判断是否修改了isVirtual
+		if(old.getIsVirtual()==1 && project.getIsVirtual()==0) { // 从虚拟改成实体, 要验证子项目是否有虚拟项目, 如果存在, 则不能修改
+			for (Project children : SessionContext.getTableSession().query(Project.class, "select * from base_project where parent_id=?", Arrays.asList(project.getId()))) {
+				if(children.getIsVirtual() == 1)
+					return new Response(builder, "type", "修改失败, 因子项目中存在虚拟项目, 故不能将当前项目改为实体项目", "smt.base.project.update.fail.children.exists.virtual");
+			}
+		} else if(project.getParentId() != null && old.getIsVirtual()==0 && project.getIsVirtual()==1) { // 从实体改成虚拟, 要验证父项目是否是实体项目, 如果是, 则不能修改
+			Project parent = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from base_project where id=?", Arrays.asList(project.getParentId()));
+			if(parent.getIsVirtual() == 0)
+				return new Response(builder, "type", "修改失败, 因父项目为实体项目, 故不能将当前项目改为虚拟项目", "smt.base.project.update.fail.parent.unvirtual");
+		}
 		
 		SessionContext.getTableSession().update(project);
 		return new Response(builder);

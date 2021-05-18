@@ -38,7 +38,7 @@ public class OrgService {
 			if(parent == null || parent.getIsDeleted() == 1)
 				throw new SmtBaseException("保存失败, 不存在id为["+org.getParentId()+"]的父组织机构/部门");
 			
-			if(parent.getType() > org.getType())
+			if(parent.getType()==2 && org.getType()==1)
 				return new Response(org, "type", "部门下不能设立组织机构", "smt.base.org.fail.org.under.dept");
 		}else if(org.getType() == 2) {
 			return new Response(org, "type", "部门不能作为组织机构的根节点", "smt.base.org.fail.dept.as.root");
@@ -61,23 +61,22 @@ public class OrgService {
 		if(org.getParentId() != old.getParentId())
 			throw new SmtBaseException("修改失败, 禁止修改关联的父组织机构/部门");
 		
-		
-		
-		
-		if(org.getType() != old.getType()) {
-			
-			
-			
-		}
-			
-		
-//		throw new SmtBaseException("修改失败, 禁止修改组织机构/部门的类型");
-		
-		
-		
+		// 判断是否修改了code
 		if(!org.getCode().equals(old.getCode()) && codeExists(org))
 			return new Response(org, "code", "已存在编码为[%s]的组织机构/部门", "smt.base.org.fail.code.exists", org.getCode());
 		
+		// 判断是否修改了type
+		if(old.getType() ==1 && org.getType()==2) { // 从组织结构改为部门, 要验证子数据中是否有组织机构, 如果存在, 则不能修改
+			for (Org children : SessionContext.getSqlSession().query(Org.class, "select * from base_org where parent_id=?", Arrays.asList(org.getId()))) {
+				if(children.getType() == 1)
+					return new Response(org, "type", "修改失败, 因子数据中存在组织机构类型, 故不能将当前数据改为部门类型", "smt.base.org.update.fail.children.exists.org");
+			}
+		}else if(org.getParentId() != null && old.getType() ==2 && org.getType()==1) { // 从部门改为组织结构, 要验证父数据是否是部门类型, 如果是, 则不能修改
+			Org parent = SessionContext.getSqlSession().uniqueQuery(Org.class, "select * from base_org where id=?", Arrays.asList(org.getParentId()));
+			if(parent.getType() == 2)
+				return new Response(org, "type", "修改失败, 因父数据为部门类型, 故不能将当前数据改为组织机构类型", "smt.base.org.update.fail.parent.is.dept");
+		}
+			
 		SessionContext.getTableSession().update(org);
 		return new Response(org);
 	}

@@ -13,7 +13,7 @@ public class Project {
 	private int level;
 	private String code;
 	private String name;
-	private int type; // 项目类型: 1(虚拟项目), 2(web项目), 3(触摸屏项目)
+	private Integer isVirtual; // 是否是虚拟项目, 1是0否
 	private State state;
 	private String description;
 	private String createUserId;
@@ -21,14 +21,6 @@ public class Project {
 	private String tenantId;
 	private String bufferId;
 	private String authCode;
-	
-	/**
-	 * 是否是实体项目
-	 * @return
-	 */
-	public boolean isEntity() {	
-		return type > 1;
-	}
 	
 	public int getId() {
 		return id;
@@ -66,11 +58,11 @@ public class Project {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public int getType() {
-		return type;
+	public Integer getIsVirtual() {
+		return isVirtual;
 	}
-	public void setType(int type) {
-		this.type = type;
+	public void setIsVirtual(Integer isVirtual) {
+		this.isVirtual = isVirtual;
 	}
 	public State getStateInstance() {
 		return state;
