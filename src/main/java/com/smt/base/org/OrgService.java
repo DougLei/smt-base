@@ -16,7 +16,7 @@ import com.smt.parent.code.response.Response;
 @TransactionComponent
 public class OrgService {
 
-	// 验证Code是否存在
+	// 验证code是否存在
 	private boolean codeExists(Org org) {
 		return Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_(
 					"select count(1) from base_org where code=? and tenant_id=?", 
