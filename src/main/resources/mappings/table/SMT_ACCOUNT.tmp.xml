@@ -9,7 +9,7 @@
 			<column name="IS_DISABLED" property="isDisabled" dataType="number" length="1" nullable="false"/>
 			<column name="DISABLE_USER_ID" property="disableUserId" dataType="char" length="36" />
 			<column name="DISABLE_DATE" property="disableDate" dataType="datetime"/>
-			<column name="DISABLE_REASON" property="disableReason" dataType="nstring" length="100"/>
+			<column name="DISABLE_REASON" property="disableReason" dataType="nstring" length="50"/>
 			<column name="USER_ID" property="userId" dataType="char" length="36" nullable="false"/>
 			<column name="OPEN_USER_ID" property="openUserId" dataType="char" length="36" nullable="false"/>
 			<column name="OPEN_DATE" property="openDate" dataType="datetime" nullable="false"/>

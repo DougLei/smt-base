@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<table name="BASE_DICT_DETAIL" class="com.smt.base.dict.entity.DictDetail" createMode="create" strict="true">
+		<columns>
+			<column name="ID" property="id" dataType="number" length="10" />
+			<column name="DICT_ID" property="dictId" dataType="number" length="10" nullable="false"/>
+			<column name="KEY_" property="key" dataType="nstring" length="50" nullable="false"/>
+			<column name="VALUE_" property="value" dataType="string" length="50" nullable="false"/>
+			<column name="DESCRIPTION" property="description" dataType="nstring" length="50"/>
+		</columns>
+		
+		<constraints>
+			<constraint type="PRIMARY_KEY" isAutoIncrement="true">
+				<column name="ID" />
+			</constraint>
+		</constraints>
+	</table>
+</mapping-configuration>

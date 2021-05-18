@@ -4,8 +4,8 @@
 		<columns>
 			<column name="ID" property="id" dataType="number" length="10" />
 			<column name="CODE" property="code" dataType="string" length="50" nullable="false"/>
-			<column name="NAME" property="name" dataType="nstring" length="100" nullable="false"/>
-			<column name="DESCRIPTION" property="description" dataType="nstring" length="200"/>
+			<column name="NAME" property="name" dataType="nstring" length="50" nullable="false"/>
+			<column name="DESCRIPTION" property="description" dataType="nstring" length="50"/>
 			<column name="IS_DELETED" property="isDeleted" dataType="number" length="1" nullable="false"/>
 			<column name="CREATE_USER_ID" property="createUserId" dataType="char" length="36" nullable="false"/>
 			<column name="CREATE_DATE" property="createDate" dataType="datetime" nullable="false"/>
