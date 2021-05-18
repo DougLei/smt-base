@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping-configuration>
-	<table name="BASE_USER_ORG_LINK" createMode="create" strict="true">
+	<table name="BASE_USER_ORG_LINK" class="com.smt.base.link.entity.UserOrgLink" createMode="create" strict="true">
 		<columns>
 			<column name="ID" property="id" dataType="number" length="10" />
 			<column name="USER_ID" property="userId" dataType="char" length="36" nullable="false"/>

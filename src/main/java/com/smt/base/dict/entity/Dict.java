@@ -1,6 +1,7 @@
 package com.smt.base.dict.entity;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 
@@ -14,6 +15,7 @@ public class Dict {
 	private Date createDate;
 	private String projectCode;
 	private String tenantId;
+	private List<DictDetail> details;
 	
 	public int getId() {
 		return id;
@@ -56,5 +58,11 @@ public class Dict {
 	}
 	public void setTenantId(String tenantId) {
 		this.tenantId = tenantId;
+	}
+	public List<DictDetail> getDetails() {
+		return details;
+	}
+	public void setDetails(List<DictDetail> details) {
+		this.details = details;
 	}
 }
