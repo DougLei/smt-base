@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<sql namespace="DataRel">
+		
+		<!-- 获取指定(LeftKey+LeftValue+RightKey)下的RightValue集合 -->
+		<content name="getRightValues" type="select">
+			select right_value from base_data_rel where left_key=#{leftKey} and left_value=#{leftValue} and right_key=#{rightKey} and tenant_id=#{tenantId} 
+			<if test="projectCode != null">
+				and project_code=#{projectCode}
+			</if>
+		</content>
+		
+		<!-- 删除指定(LeftKey+LeftValue+RightKey)下的所有RightValue -->
+		<content name="deleteAll" type="delete">
+			delete base_data_rel where left_key=#{leftKey} and left_value=#{leftValue} and right_key=#{rightKey} and tenant_id=#{tenantId} 
+			<if test="projectCode != null">
+				and project_code=#{projectCode}
+			</if>
+		</content>
+		
+		<!--  删除数据关联关系 -->
+		<content name="delete" type="delete">
+			delete base_data_rel where left_key=#{[0].leftKey} and left_value=#{[0].leftValue} and right_key=#{rightKey} and tenant_id=#{[0].tenantId} and 
+			<if test="[0].projectCode != null">
+				project_code=#{[0].projectCode} and 
+			</if>
+			<foreach collection="list" alias="rel" open="right_value in (" separator="," close=")">
+				#{rel.rightValue}
+			</foreach> 
+		</content>
+		
+	</sql>
+</mapping-configuration>

@@ -34,7 +34,21 @@ public class UserController {
 	@LoggingResponse
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public Response login() {
-		// TODO 临时返回空对象
+		// TODO 
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		Response response = new Response(null);
 		return response;
 	}
