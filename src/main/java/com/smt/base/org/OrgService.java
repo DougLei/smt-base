@@ -18,9 +18,9 @@ public class OrgService {
 
 	// 验证code是否存在
 	private boolean codeExists(Org org) {
-		return Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_(
-					"select count(1) from base_org where code=? and tenant_id=?", 
-					Arrays.asList(org.getCode(), org.getTenantId()))[0].toString()) > 0;
+		return SessionContext.getSqlSession().uniqueQuery_(
+				"select id from base_org where code=? and tenant_id=?", 
+				Arrays.asList(org.getCode(), org.getTenantId())) != null;
 	}
 	
 	/**

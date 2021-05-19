@@ -1,4 +1,4 @@
-package com.smt.base.link.entity;
+package com.smt.base.link.entity.user_org;
 
 /**
  * 
@@ -9,6 +9,12 @@ public class UserOrgLink {
 	private String userId;
 	private String orgCode;
 	private String tenantId;
+	
+	public UserOrgLink(String userId, String orgCode, String tenantId) {
+		this.userId = userId;
+		this.orgCode = orgCode;
+		this.tenantId = tenantId;
+	}
 	
 	public int getId() {
 		return id;

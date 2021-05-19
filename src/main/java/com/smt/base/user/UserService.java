@@ -26,15 +26,15 @@ public class UserService {
 	
 	// 验证NikeName是否存在
 	private boolean nikeNameExists(User user) {
-		return Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_(
-					"select count(1) from base_user where nike_name=? and tenant_id=?", 
-					Arrays.asList(user.getNikeName(), user.getTenantId()))[0].toString()) > 0;
+		return SessionContext.getSqlSession().uniqueQuery_(
+				"select id from base_user where nike_name=? and tenant_id=?", 
+				Arrays.asList(user.getNikeName(), user.getTenantId())) != null;
 	}
 	// 验证LoginName是否存在
 	private boolean loginNameExists(Account account) {
-		return Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_(
-					"select count(1) from base_account where login_name=? and tenant_id=?", 
-					Arrays.asList(account.getLoginName(), account.getTenantId()))[0].toString()) > 0;
+		return SessionContext.getSqlSession().uniqueQuery_(
+				"select id from base_account where login_name=? and tenant_id=?", 
+				Arrays.asList(account.getLoginName(), account.getTenantId())) != null;
 	}
 	
 	/**
@@ -102,6 +102,7 @@ public class UserService {
 		return new Response(userId);
 	}
 	
+	// ------------------------------------------------------------------------------------------------------
 	/**
 	 * 开通账户
 	 * @param builder

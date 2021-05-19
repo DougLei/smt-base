@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<sql namespace="Dict">
+	
+		<!-- 删除数据字典明细 -->
+		<content name="deleteDetail" type="delete">
+			delete base_dict_detail where 
+			<foreach collection="ids" alias="id" open="id in (" separator="," close=")">
+				#{id, dataType=number, length=10}
+			</foreach> 
+		</content>
+		
+	</sql>
+</mapping-configuration>

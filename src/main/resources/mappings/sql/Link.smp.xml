@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<sql namespace="Link">
+	
+		<!-- 删除用户和组织机构的关系 -->
+		<content name="delete4UserAndOrgLink" type="delete">
+			delete base_user_org_link where org_code=#{[0].orgCode, dataType=string, length=50} and tenant_id=#{[0].tenantId, dataType=char, length=36} and 
+			<foreach collection="links" alias="link" open="user_id in (" separator="," close=")">
+				#{link.userId, dataType=char, length=36}
+			</foreach> 
+		</content>
+		
+	</sql>
+</mapping-configuration>
