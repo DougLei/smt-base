@@ -1,4 +1,4 @@
-package com.smt.base.user.entity;
+package com.smt.base.user;
 
 import java.util.UUID;
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<sql namespace="Auth">
+		
+		<!-- 获取指定(LeftKey+LeftValue+RightKey)下的RightValue集合 -->
+		<content name="getRightValues" type="select">
+			select right_value from base_data_rel 
+				where left_key=#{leftKey} and left_value=#{leftValue} and right_key=#{rightKey} and project_code=#{projectCode} and tenant_id=#{tenantId}
+			union
+			select right_value from base_data_rel 
+				where left_key=#{leftKey} and left_value=#{leftValue} and right_key=#{rightKey} and project_code is null and tenant_id=#{tenantId}  
+		</content>
+		
+	</sql>
+</mapping-configuration>

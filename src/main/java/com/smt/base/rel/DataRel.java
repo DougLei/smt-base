@@ -18,8 +18,7 @@ public class DataRel {
 	private String tenantId;
 	
 	public DataRel() {}
-	public DataRel(String leftKey, String leftValue, String rightKey, String rightValue, 
-			String createUserId, Date createDate, String projectCode, String tenantId) {
+	public DataRel(String leftKey, String leftValue, String rightKey, String rightValue, String createUserId, Date createDate, String projectCode, String tenantId) {
 		this.leftKey = leftKey;
 		this.leftValue = leftValue;
 		this.rightKey = rightKey;

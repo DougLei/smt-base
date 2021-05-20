@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping-configuration>
-	<table name="BASE_ACCOUNT" class="com.smt.base.user.entity.Account" createMode="create" strict="true">
+	<table name="BASE_ACCOUNT" class="com.smt.base.user.Account" createMode="create" strict="true">
 		<columns>
 			<column name="ID" property="id" dataType="number" length="10" />
 			<column name="LOGIN_NAME" property="loginName" dataType="string" length="50" nullable="false"/>
-			<column name="LOGIN_PWD" property="loginPwd" dataType="string" length="50" nullable="false"/>
+			<column name="LOGIN_PWD" property="loginPwd" dataType="char" length="32" nullable="false"/>
 			<column name="EXPIRY_DATE" property="expiryDate" dataType="datetime"/>
 			<column name="IS_DISABLED" property="isDisabled" dataType="number" length="1" nullable="false"/>
 			<column name="DISABLE_USER_ID" property="disableUserId" dataType="char" length="36" />

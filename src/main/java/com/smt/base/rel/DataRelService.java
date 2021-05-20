@@ -14,7 +14,7 @@ import com.douglei.orm.context.TransactionComponent;
  * @author DougLei
  */
 @TransactionComponent
-public class RelService {
+public class DataRelService {
 	
 	// 获取指定(LeftKey+LeftValue+RightKey)下的RightValue集合
 	private Set<String> getRightValues(DataRel rel) {

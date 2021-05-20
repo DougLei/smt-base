@@ -10,10 +10,6 @@ import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.douglei.tools.StringUtil;
 import com.smt.base.SmtBaseException;
-import com.smt.base.user.entity.Account;
-import com.smt.base.user.entity.AccountBuilder;
-import com.smt.base.user.entity.User;
-import com.smt.base.user.entity.UserBuilder;
 import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.response.Response;
 
@@ -156,10 +152,18 @@ public class UserService {
 		if(account.getIsDisabled() == 1)
 			return new Response(builder.getId(), null, "禁用账户失败, 账户处于禁用状态", "smt.base.user.fail.account.isdisabled");
 		
+		disableAccount_(builder.getId(), TokenContext.get().getUserId(), new Date(), builder.getDisableReason());
+		return new Response(builder.getId());
+	}
+	
+	/**
+	 * 禁用账户
+	 * @param builder
+	 */
+	public void disableAccount_(int accountId, String disableUserId, Date disableDate, String disableReason) {
 		SessionContext.getSqlSession().executeUpdate(
 				"update base_account set is_disabled=1, disable_user_id=?, disable_date=?, disable_reason=? where id=?", 
-				Arrays.asList(TokenContext.get().getUserId(), new Date(), builder.getDisableReason(), builder.getId()));
-		return new Response(builder.getId());
+				Arrays.asList(disableUserId, disableDate, disableReason, accountId));
 	}
 	
 	/**

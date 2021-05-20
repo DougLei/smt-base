@@ -9,10 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.smt.base.user.entity.AccountBuilder;
-import com.smt.base.user.entity.UserBuilder;
-import com.smt.parent.code.filters.token.TokenEntity;
-import com.smt.parent.code.filters.token.TokenValidateResult;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
 
@@ -27,71 +23,6 @@ public class UserController {
 	@Autowired
 	private UserService service;
 	
-	/**
-	 * 登录
-	 * @return
-	 */
-	@LoggingResponse
-	@RequestMapping(value = "/login", method = RequestMethod.POST)
-	public Response login() {
-		// TODO 
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		Response response = new Response(null);
-		return response;
-	}
-
-	/**
-	 * 验证token
-	 * @param token
-	 * @return
-	 */
-	@RequestMapping(value = "/token/validate/{token}", method = RequestMethod.GET)
-	public TokenValidateResult validate(@PathVariable String token) {
-		// TODO 临时验证空对象
-		TokenEntity entity = new TokenEntity();
-		entity.setAccountId("accountId111111111111111111111111111");
-		entity.setUserId("userId111111111111111111111111111111");
-		entity.setProjectCode("projectCode");
-		entity.setTenantId("tenantId1111111111111111111111111111");
-		return new TokenValidateResult(entity);
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	// ------------------------------------------------------------------------------------------------------
 	/**
 	 * 添加用户
 	 * @param builder

@@ -17,11 +17,11 @@ import com.smt.parent.code.spring.web.LoggingResponse;
  * @author DougLei
  */
 @RestController
-@RequestMapping("/rel")
-public class RelController {
+@RequestMapping("/data/rel")
+public class DataRelController {
 	
 	@Autowired
-	private RelService service;
+	private DataRelService service;
 	
 	/**
 	 * 添加数据关联关系

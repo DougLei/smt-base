@@ -17,6 +17,10 @@ spring:
       name: smt-base
 
 smt:
+  base:
+    auth:
+      enable-ip-limit: false 
+      token-valid-time: 120
   parent:
     code:
       filter:
@@ -26,11 +30,12 @@ smt:
           access-control-max-age: 1800
         log:
           ignore-url-patterns:
-          - /user/token/validate/*
+          - /token/validate/*
         token:
           ignore-url-patterns:
-          - /user/login
-          - /user/token/validate/*
+          - /clogin
+          - /login
+          - /token/validate/*
 
 # 指定该服务要注册进指定url的服务注册中心  
 eureka:

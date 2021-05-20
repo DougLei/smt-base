@@ -1,8 +1,8 @@
-package com.smt.base.user.entity;
+package com.smt.base.user;
 
 import java.util.Arrays;
 
-import org.springframework.util.DigestUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 
 import com.douglei.orm.context.SessionContext;
 import com.douglei.tools.StringUtil;
@@ -53,7 +53,7 @@ public class AccountBuilder {
 	public Account build(User user) {
 		Account account = new Account();
 		account.setLoginName(StringUtil.isEmpty(loginName)?user.getNikeName():loginName);
-		account.setLoginPwd(DigestUtils.md5DigestAsHex(((StringUtil.isEmpty(loginPwd)?"111111":loginPwd) + account.getId()).getBytes()));
+		account.setLoginPwd(DigestUtils.md5Hex(((StringUtil.isEmpty(loginPwd)?"111111":loginPwd) + user.getId())));
 		account.setUserId(user.getId());
 		
 		TokenEntity token = TokenContext.get();
