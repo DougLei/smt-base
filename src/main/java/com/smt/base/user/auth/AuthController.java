@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.douglei.tools.StringUtil;
 import com.douglei.tools.web.HttpUtil;
+import com.smt.base.user.auth.temp.TenantId;
 import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.filters.token.TokenEntity;
 import com.smt.parent.code.filters.token.TokenValidateResult;
@@ -29,6 +30,9 @@ public class AuthController {
 	private AuthService service;
 	
 	@Autowired
+	private TokenContainer tokenContainer;
+	
+	@Autowired
 	private AuthConfigurationProperties properties;
 	
 	/**
@@ -40,7 +44,7 @@ public class AuthController {
 	@LoggingResponse
 	@RequestMapping(value = "/clogin", method = RequestMethod.POST)
 	public Response clogin(@RequestBody LoginEntity entity, HttpServletRequest request) {
-		entity.setClientIp(HttpUtil.getClientIp(request));
+		loginPreprocessing(entity, request);
 		
 		if(properties.getCloginAccounts() == null)
 			return new Response(entity, null, "无权登录配置系统, 请联系管理员", "smt.base.clogin.fail.no.right");
@@ -63,13 +67,23 @@ public class AuthController {
 	@LoggingResponse
 	@RequestMapping(value = "/login", method = RequestMethod.POST)
 	public Response login(@RequestBody LoginEntity entity, HttpServletRequest request) {
-		entity.setClientIp(HttpUtil.getClientIp(request));
+		loginPreprocessing(entity, request);
 		
 		if(StringUtil.isEmpty(entity.getProjectCode()))
-			return new Response(entity, "projectCode", "项目信息不能为空", "smt.base.login.fail.projectcode.null");
+			return new Response(entity, "projectCode", "项目不能为空", "smt.base.login.fail.project.null");
 		return login_(entity, request);
 	}
 	
+	// 登录前置处理
+	private void loginPreprocessing(LoginEntity entity, HttpServletRequest request) {
+		if(entity.getProjectCode()==null)
+			entity.setProjectCode(request.getParameter("project"));
+		if(entity.getTenantId()==null)
+			entity.setTenantId(request.getParameter("tenant"));
+		
+		entity.setClientIp(HttpUtil.getClientIp(request));
+		entity.setTenantId(TenantId.TEMP_VALUE); // 目前租户id使用临时的固定值
+	}
 	// 登录
 	private Response login_(LoginEntity entity, HttpServletRequest request) {
 		if(StringUtil.isEmpty(entity.getLoginName()))
@@ -77,7 +91,7 @@ public class AuthController {
 		if(StringUtil.isEmpty(entity.getLoginPwd()))
 			return new Response(entity, "loginPwd", "登录密码不能为空", "smt.base.login.fail.loginpwd.null");
 		if(StringUtil.isEmpty(entity.getTenantId()))
-			return new Response(entity, "tenantId", "租户信息不能为空", "smt.base.login.fail.tenantid.null");
+			return new Response(entity, "tenantId", "租户不能为空", "smt.base.login.fail.tenant.null");
 		
 		return service.login(entity);
 	}
@@ -90,7 +104,7 @@ public class AuthController {
 	@RequestMapping(value = "/loginout", method = RequestMethod.GET)
 	public Response loginout() {
 		String token = TokenContext.get().getValue();
-		TokenContainer.remove(token);
+		tokenContainer.remove(token);
 		return new Response(token);
 	}
 	
@@ -102,22 +116,37 @@ public class AuthController {
 	 */
 	@RequestMapping(value = "/token/validate/{token}", method = RequestMethod.GET)
 	public TokenValidateResult validate(@PathVariable String token, HttpServletRequest request) {
-		TokenEntity entity = TokenContainer.get(token);
+		TokenEntity entity = tokenContainer.get(token);
 		if(entity == null)
-			return new TokenValidateResult("无效token", "smt.base.token.validate.invalid");
+			return new TokenValidateResult(null, "无效token", "smt.base.token.validate.invalid");
 		
 		if(properties.isEnableIpLimit() && !entity.getClientIp().equals(request.getParameter("clientIp"))) {
-			TokenContainer.remove(token);
-			return new TokenValidateResult("客户端ip变动, 请重新登录", "smt.base.token.validate.ip.changed");
+			tokenContainer.remove(token);
+			return new TokenValidateResult(entity, "客户端ip变动, 请重新登录", "smt.base.token.validate.ip.changed");
 		}
 		
 		if(entity.getLastOpDate().getTime()+properties.getTokenValidTimes() < entity.getCurrentDate().getTime()) {
-			TokenContainer.remove(token);
-			return new TokenValidateResult("token已过期, 请重新登录", "smt.base.token.validate.overdue");
+			tokenContainer.remove(token);
+			return new TokenValidateResult(entity, "token已过期, 请重新登录", "smt.base.token.validate.overdue");
 		}
 		
 		entity.setLastOpDate(entity.getCurrentDate());
-		TokenContainer.update(entity);
+		tokenContainer.update(entity);
 		return new TokenValidateResult(entity);
+	}
+	
+	/**
+	 * token数据更新
+	 * @param entity
+	 * @return
+	 */
+	@LoggingResponse
+	@RequestMapping(value = "/token/update", method = RequestMethod.POST)
+	public Response updateToken(@RequestBody TokenEntity entity) {
+		
+		
+		
+		
+		return new Response(entity.getValue());
 	}
 }

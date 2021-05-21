@@ -29,6 +29,9 @@ public class AuthService {
 	@Autowired
 	private UserService userService;
 	
+	@Autowired
+	private TokenContainer tokenContainer;
+	
 	/**
 	 * 登录
 	 * @param entity
@@ -37,8 +40,13 @@ public class AuthService {
 	@Transaction
 	public Response login(LoginEntity entity) {
 		if(!entity.getTenantId().equals(TenantId.TEMP_VALUE))
-			return new Response(entity, "tenantId", "不存在相关的租户信息", "smt.base.login.fail.tenantId.unexists");
-		
+			return new Response(entity, null, "不存在相关的租户", "smt.base.login.fail.tenant.unexists");
+		// 不存在这个项目
+		if(entity.getProjectCode() != null 
+				&& SessionContext.getSqlSession().uniqueQuery_("select id from base_project where code=? and tenant_id=?", Arrays.asList(entity.getProjectCode(), entity.getTenantId())) == null)
+			return new Response(entity, null, "不存在相关的项目", "smt.base.login.fail.project.unexists");
+			
+		// 进行登录验证
 		Account account = SessionContext.getSqlSession().uniqueQuery(Account.class, "select * from base_account where login_name=? and tenant_id=?", Arrays.asList(entity.getLoginName(), entity.getTenantId()));
 		if(account == null || !account.getLoginPwd().equals(DigestUtils.md5Hex(entity.getLoginPwd()+account.getUserId())))
 			return new Response(entity, null, "用户名或密码错误", "smt.base.login.fail.name.pwd.error");
@@ -78,7 +86,7 @@ public class AuthService {
 		token.setClientIp(entity.getClientIp());
 		
 		// 存储token, 并构建响应体
-		TokenContainer.add(token);
+		tokenContainer.add(token);
 		return new Response(token);
 	}
 	private String[] getRightValuesByUserId(DataRel rel, Key rightKey) {

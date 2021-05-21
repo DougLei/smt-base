@@ -1,7 +1,5 @@
 package com.smt.base.user.auth;
 
-import com.smt.base.user.auth.temp.TenantId;
-
 /**
  * 
  * @author DougLei
@@ -10,7 +8,7 @@ public class LoginEntity {
 	private String loginName;
 	private String loginPwd;
 	private String projectCode;
-	private String tenantId = TenantId.TEMP_VALUE;
+	private String tenantId;
 	private String clientIp; // 客户端ip
 	
 	public String getLoginName() {
@@ -34,10 +32,9 @@ public class LoginEntity {
 	public String getTenantId() {
 		return tenantId;
 	}
-//	目前不需要传入租户id信息, 使用默认值即可	
-//	public void setTenantId(String tenantId) {
-//		this.tenantId = tenantId;
-//	}
+	public void setTenantId(String tenantId) {
+		this.tenantId = tenantId;
+	}
 	public String getClientIp() {
 		return clientIp;
 	}
