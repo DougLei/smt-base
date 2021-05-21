@@ -9,6 +9,7 @@ public class LoginEntity {
 	private String loginPwd;
 	private String projectCode;
 	private String tenantId;
+	private int clientType; // 客户端类型
 	private String clientIp; // 客户端ip
 	
 	public String getLoginName() {
@@ -34,6 +35,12 @@ public class LoginEntity {
 	}
 	public void setTenantId(String tenantId) {
 		this.tenantId = tenantId;
+	}
+	public int getClientType() {
+		return clientType;
+	}
+	public void setClientType(int clientType) {
+		this.clientType = clientType;
 	}
 	public String getClientIp() {
 		return clientIp;

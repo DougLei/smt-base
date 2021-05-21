@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.douglei.tools.StringUtil;
 import com.douglei.tools.web.HttpUtil;
-import com.smt.base.user.auth.temp.TenantId;
+import com.smt.parent.code.filters.log.LogContext;
 import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.filters.token.TokenEntity;
 import com.smt.parent.code.filters.token.TokenValidateResult;
@@ -34,6 +34,28 @@ public class AuthController {
 	
 	@Autowired
 	private AuthConfigurationProperties properties;
+	
+	// 登录前置处理
+	private void loginPreprocessing(LoginEntity entity, HttpServletRequest request) {
+		if(entity.getProjectCode()==null)
+			entity.setProjectCode(request.getParameter("project"));
+		if(entity.getTenantId()==null)
+			entity.setTenantId(request.getParameter("tenant"));
+		
+		entity.setClientIp(HttpUtil.getClientIp(request));
+		entity.setTenantId(TempTenantId.VALUE); 
+	}
+	// 登录
+	private Response login_(LoginEntity entity, HttpServletRequest request) {
+		if(StringUtil.isEmpty(entity.getLoginName()))
+			return new Response(entity, "loginName", "登录名不能为空", "smt.base.login.fail.loginname.null");
+		if(StringUtil.isEmpty(entity.getLoginPwd()))
+			return new Response(entity, "loginPwd", "登录密码不能为空", "smt.base.login.fail.loginpwd.null");
+		if(StringUtil.isEmpty(entity.getTenantId()))
+			return new Response(entity, "tenantId", "租户不能为空", "smt.base.login.fail.tenant.null");
+		
+		return service.login(entity);
+	}
 	
 	/**
 	 * (配置系统)登录
@@ -74,38 +96,42 @@ public class AuthController {
 		return login_(entity, request);
 	}
 	
-	// 登录前置处理
-	private void loginPreprocessing(LoginEntity entity, HttpServletRequest request) {
-		if(entity.getProjectCode()==null)
-			entity.setProjectCode(request.getParameter("project"));
-		if(entity.getTenantId()==null)
-			entity.setTenantId(request.getParameter("tenant"));
-		
-		entity.setClientIp(HttpUtil.getClientIp(request));
-		entity.setTenantId(TenantId.TEMP_VALUE); // 目前租户id使用临时的固定值
-	}
-	// 登录
-	private Response login_(LoginEntity entity, HttpServletRequest request) {
-		if(StringUtil.isEmpty(entity.getLoginName()))
-			return new Response(entity, "loginName", "登录名不能为空", "smt.base.login.fail.loginname.null");
-		if(StringUtil.isEmpty(entity.getLoginPwd()))
-			return new Response(entity, "loginPwd", "登录密码不能为空", "smt.base.login.fail.loginpwd.null");
-		if(StringUtil.isEmpty(entity.getTenantId()))
-			return new Response(entity, "tenantId", "租户不能为空", "smt.base.login.fail.tenant.null");
-		
-		return service.login(entity);
-	}
-	
 	/**
 	 * 登出
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse
 	@RequestMapping(value = "/loginout", method = RequestMethod.GET)
-	public Response loginout() {
-		String token = TokenContext.get().getValue();
-		tokenContainer.remove(token);
-		return new Response(token);
+	public Response loginout(HttpServletRequest request) {
+		TokenEntity entity = TokenContext.get();
+		
+		if("true".equalsIgnoreCase(request.getParameter("all"))) {
+			tokenContainer.removeByUserId(entity.getUserId());
+			return new Response(entity.getUserId());
+		}
+		
+		tokenContainer.remove(entity.getValue());
+		return new Response(entity.getValue());
+	}
+	
+	// ------------------------------------------------------------------------------------------------------
+	// 验证token
+	private TokenValidateResult validate_(String token, String clientIp) {
+		TokenEntity entity = tokenContainer.get(token);
+		if(entity == null)
+			return new TokenValidateResult(null, "无效token", "smt.base.token.validate.invalid");
+		
+		if(properties.isEnableClientIpLimit() && !entity.getClientIp().equals(clientIp)) {
+			tokenContainer.remove(token);
+			return new TokenValidateResult(entity, "客户端ip变动, 请重新登录", "smt.base.token.validate.ip.changed");
+		}
+		
+		if(entity.getLastOpDate().getTime()+properties.getTokenValidTimes() < entity.getCurrentDate().getTime()) {
+			tokenContainer.remove(token);
+			return new TokenValidateResult(entity, "token已过期, 请重新登录", "smt.base.token.validate.overdue");
+		}
+		return new TokenValidateResult(entity);
 	}
 	
 	/**
@@ -116,37 +142,31 @@ public class AuthController {
 	 */
 	@RequestMapping(value = "/token/validate/{token}", method = RequestMethod.GET)
 	public TokenValidateResult validate(@PathVariable String token, HttpServletRequest request) {
-		TokenEntity entity = tokenContainer.get(token);
-		if(entity == null)
-			return new TokenValidateResult(null, "无效token", "smt.base.token.validate.invalid");
-		
-		if(properties.isEnableIpLimit() && !entity.getClientIp().equals(request.getParameter("clientIp"))) {
-			tokenContainer.remove(token);
-			return new TokenValidateResult(entity, "客户端ip变动, 请重新登录", "smt.base.token.validate.ip.changed");
+		TokenValidateResult result = validate_(token, request.getParameter("clientIp"));
+		if(result.isSuccess()) {
+			TokenEntity entity = result.getEntity();
+			
+			entity.setLastOpDate(entity.getCurrentDate());
+			tokenContainer.update(entity);
 		}
-		
-		if(entity.getLastOpDate().getTime()+properties.getTokenValidTimes() < entity.getCurrentDate().getTime()) {
-			tokenContainer.remove(token);
-			return new TokenValidateResult(entity, "token已过期, 请重新登录", "smt.base.token.validate.overdue");
-		}
-		
-		entity.setLastOpDate(entity.getCurrentDate());
-		tokenContainer.update(entity);
-		return new TokenValidateResult(entity);
+		return result;
 	}
 	
 	/**
-	 * token数据更新
-	 * @param entity
+	 * 修改token数据
+	 * @param data
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse
 	@RequestMapping(value = "/token/update", method = RequestMethod.POST)
-	public Response updateToken(@RequestBody TokenEntity entity) {
+	public Response updateToken(@RequestBody TokenEntity data, HttpServletRequest request) {
+		TokenValidateResult result = validate_(data.getValue(), HttpUtil.getClientIp(request));
+		if(result.getEntity() != null) 
+			LogContext.loggingUserId(result.getEntity().getUserId());
 		
-		
-		
-		
-		return new Response(entity.getValue());
+		if(result.isSuccess()) 
+			return service.updateToken(result.getEntity(), data);
+		return new Response(data.getValue(), null, result.getMessage(), result.getCode());		
 	}
 }

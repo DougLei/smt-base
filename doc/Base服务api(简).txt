@@ -10,7 +10,6 @@ POST
 	"loginPwd":"" --登录密码
 }
 
-
 --(运行系统)登录
 http://192.168.1.111:8502/login
 POST
@@ -24,6 +23,16 @@ POST
 http://192.168.1.111:8502/loginout
 GET
 
+--更新token数据
+http://192.168.1.111:8502/token/update
+POST
+{
+	"value":"" , -- token值
+	"projectCode":"", -- token关联的项目code; 如果传入null, 则会将token中的projectCode值置空
+	"extend":{ -- token关联的扩展数据, 自定义
+		"xxx":""
+	}
+}
 
 
 *********************************************************************************
@@ -75,12 +84,12 @@ DELETE
 http://192.168.1.111:8502/user/insert
 POST
 {
-	"nikeName":"", --昵称, 租户下唯一
+	"name":"", --名称, 租户下唯一
 	"realName":"", --真实姓名
 	"sex":1/2, -- 性别, 1男, 2女
 	"phoneNum":"", -- 手机号码
 	"email":"", -- 邮箱
-	"loginName":"", -- 开通的账户的登录名, 可不传, 默认为nikeName
+	"loginName":"", -- 开通的账户的登录名, 可不传, 默认为name
 	"loginPwd":"" -- 开通的账户的登录密码, 可不传, 默认为111111
 }
 
@@ -89,7 +98,7 @@ http://192.168.1.111:8502/user/update
 POST
 {
 	"id":"", --主键
-	"nikeName":"", --昵称, 租户下唯一
+	"name":"", --名称, 租户下唯一
 	"realName":"", --真实姓名
 	"sex":1/2, -- 性别, 1男, 2女
 	"phoneNum":"", -- 手机号码
@@ -105,7 +114,7 @@ http://192.168.1.111:8502/user/account/open
 POST
 {
 	"userId":"", -- 用户id
-	"loginName":"", -- 账户的登录名, 可不传, 默认为User的nikeName
+	"loginName":"", -- 账户的登录名, 可不传, 默认为User的name
 	"loginPwd":"" -- 账户的登录密码, 可不传, 默认为666
 }
 

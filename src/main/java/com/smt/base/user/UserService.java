@@ -20,11 +20,11 @@ import com.smt.parent.code.response.Response;
 @TransactionComponent
 public class UserService {
 	
-	// 验证NikeName是否存在
-	private boolean nikeNameExists(User user) {
+	// 验证name是否存在
+	private boolean nameExists(User user) {
 		return SessionContext.getSqlSession().uniqueQuery_(
-				"select id from base_user where nike_name=? and tenant_id=?", 
-				Arrays.asList(user.getNikeName(), user.getTenantId())) != null;
+				"select id from base_user where name_=? and tenant_id=?", 
+				Arrays.asList(user.getName(), user.getTenantId())) != null;
 	}
 	// 验证LoginName是否存在
 	private boolean loginNameExists(Account account) {
@@ -42,8 +42,8 @@ public class UserService {
 	@Transaction
 	public Response insert(UserBuilder builder, boolean openAccount) {
 		User user= builder.build4Insert(openAccount);
-		if(nikeNameExists(user))
-			return new Response(builder, "nikeName", "昵称[%s]已被使用", "smt.base.user.fail.nikename.exists", user.getNikeName());
+		if(nameExists(user))
+			return new Response(builder, "name", "名称[%s]已被使用", "smt.base.user.fail.name.exists", user.getName());
 		
 		// 开通账户
 		if(openAccount) {
@@ -70,8 +70,8 @@ public class UserService {
 			throw new SmtBaseException("修改失败, 不存在id为["+builder.getId()+"]的用户");
 		
 		User user = builder.build4Update();
-		if(!user.getNikeName().equals(old.getNikeName()) && nikeNameExists(user))
-			return new Response(builder, "nikeName", "昵称[%s]已被使用", "smt.base.user.fail.nikename.exists", user.getNikeName());
+		if(!user.getName().equals(old.getName()) && nameExists(user))
+			return new Response(builder, "name", "名称[%s]已被使用", "smt.base.user.fail.name.exists", user.getName());
 		
 		SessionContext.getTableSession().update(user);
 		return new Response(builder);

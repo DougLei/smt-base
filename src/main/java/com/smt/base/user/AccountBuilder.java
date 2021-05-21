@@ -52,7 +52,7 @@ public class AccountBuilder {
 	 */
 	public Account build(User user) {
 		Account account = new Account();
-		account.setLoginName(StringUtil.isEmpty(loginName)?user.getNikeName():loginName);
+		account.setLoginName(StringUtil.isEmpty(loginName)?user.getName():loginName);
 		account.setLoginPwd(DigestUtils.md5Hex(((StringUtil.isEmpty(loginPwd)?"111111":loginPwd) + user.getId())));
 		account.setUserId(user.getId());
 		

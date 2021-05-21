@@ -15,7 +15,6 @@ import com.smt.base.rel.DataRel;
 import com.smt.base.rel.Key;
 import com.smt.base.user.Account;
 import com.smt.base.user.UserService;
-import com.smt.base.user.auth.temp.TenantId;
 import com.smt.parent.code.filters.token.TokenEntity;
 import com.smt.parent.code.response.Response;
 
@@ -39,7 +38,7 @@ public class AuthService {
 	 */
 	@Transaction
 	public Response login(LoginEntity entity) {
-		if(!entity.getTenantId().equals(TenantId.TEMP_VALUE))
+		if(!entity.getTenantId().equals(TempTenantId.VALUE))
 			return new Response(entity, null, "不存在相关的租户", "smt.base.login.fail.tenant.unexists");
 		// 不存在这个项目
 		if(entity.getProjectCode() != null 
@@ -64,7 +63,7 @@ public class AuthService {
 		token.setValue(UUID.randomUUID().toString());
 		token.setAccountId(account.getId());
 		token.setUserId(account.getUserId());
-		
+		 
 		// 如果ProjectCode不为空时,  查询用户相关的数据
 		if(entity.getProjectCode() != null) {
 			token.setProjectCode(entity.getProjectCode());
@@ -83,6 +82,7 @@ public class AuthService {
 		token.setTenantId(entity.getTenantId());
 		token.setLoginDate(currentDate);
 		token.setLastOpDate(currentDate);
+		token.setClientType(entity.getClientType());
 		token.setClientIp(entity.getClientIp());
 		
 		// 存储token, 并构建响应体
@@ -102,5 +102,25 @@ public class AuthService {
 		return rightValues;
 	}
 	
-	
+	// ------------------------------------------------------------------------------------------------------
+	/**
+	 * 修改token数据
+	 * @param entity
+	 * @param data
+	 * @return
+	 */
+	@Transaction
+	public Response updateToken(TokenEntity entity, TokenEntity data) {
+		// 验证projectCode是否存在
+		if(data.getProjectCode() != null 
+				&& !data.getProjectCode().equals(entity.getProjectCode())
+				&& SessionContext.getSqlSession().uniqueQuery_("select id from base_project where code=? and tenant_id=?", Arrays.asList(data.getProjectCode(), entity.getTenantId())) == null)
+			return new Response(entity, null, "修改token数据失败, 不存在编码为[%s]的项目", "smt.base.token.update.fail.project.unexists", data.getProjectCode());
+		
+		entity.setProjectCode(data.getProjectCode());
+		entity.setLastOpDate(entity.getCurrentDate());
+		entity.setExtend(data.getExtend());
+		tokenContainer.update(entity);
+		return new Response(data.getValue());
+	}
 }

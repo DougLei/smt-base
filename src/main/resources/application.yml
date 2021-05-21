@@ -19,8 +19,11 @@ spring:
 smt:
   base:
     auth:
-      enable-ip-limit: false 
+      enable-client-ip-limit: false
       token-valid-time: 120
+      clogin-accounts:
+      - login-name: admin
+        tenant-id: 200ceb26807d6bf99fd6f4f0d1ca54d40001
   parent:
     code:
       filter:
@@ -36,6 +39,7 @@ smt:
           - /clogin
           - /login
           - /token/validate/*
+          - /token/update
 
 # 指定该服务要注册进指定url的服务注册中心  
 eureka:

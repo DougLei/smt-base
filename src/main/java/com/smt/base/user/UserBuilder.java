@@ -12,7 +12,7 @@ import com.smt.parent.code.filters.token.TokenEntity;
 public class UserBuilder {
 	// 用户信息
 	private String id;
-	private String nikeName;
+	private String name;
 	private String realName;
 	private Integer sex;
 	private String phoneNum;
@@ -24,7 +24,7 @@ public class UserBuilder {
 	// 构建User实例, 设置基础数据
 	private User build() {
 		User user = new User();
-		user.setNikeName(nikeName);
+		user.setName(name);
 		user.setRealName(realName);
 		user.setSex(sex);
 		user.setPhoneNum(phoneNum);
@@ -68,11 +68,11 @@ public class UserBuilder {
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getNikeName() {
-		return nikeName;
+	public String getName() {
+		return name;
 	}
-	public void setNikeName(String nikeName) {
-		this.nikeName = nikeName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public String getRealName() {
 		return realName;

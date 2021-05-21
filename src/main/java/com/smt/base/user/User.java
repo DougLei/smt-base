@@ -9,7 +9,7 @@ import java.util.Date;
 public class User {
 	private String id;
 	private int type; 
-	private String nikeName;
+	private String name;
 	private String realName;
 	private Integer sex; // 性别: 1(男), 2(女)
 	private String phoneNum;
@@ -32,11 +32,11 @@ public class User {
 	public void setType(int type) {
 		this.type = type;
 	}
-	public String getNikeName() {
-		return nikeName;
+	public String getName() {
+		return name;
 	}
-	public void setNikeName(String nikeName) {
-		this.nikeName = nikeName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	public String getRealName() {
 		return realName;
