@@ -43,7 +43,7 @@ public class AuthService {
 		// 不存在这个项目
 		if(entity.getProjectCode() != null 
 				&& SessionContext.getSqlSession().uniqueQuery_("select id from base_project where code=? and tenant_id=?", Arrays.asList(entity.getProjectCode(), entity.getTenantId())) == null)
-			return new Response(entity, null, "不存在相关的项目", "smt.base.login.fail.project.unexists");
+			return new Response(entity, null, "不存在编码为[%s]的项目", "smt.base.login.fail.project.unexists", entity.getProjectCode());
 			
 		// 进行登录验证
 		Account account = SessionContext.getSqlSession().uniqueQuery(Account.class, "select * from base_account where login_name=? and tenant_id=?", Arrays.asList(entity.getLoginName(), entity.getTenantId()));

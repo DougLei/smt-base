@@ -92,7 +92,7 @@ public class AuthController {
 		loginPreprocessing(entity, request);
 		
 		if(StringUtil.isEmpty(entity.getProjectCode()))
-			return new Response(entity, "projectCode", "项目不能为空", "smt.base.login.fail.project.null");
+			return new Response(entity, "projectCode", "项目编码不能为空", "smt.base.login.fail.project.null");
 		return login_(entity, request);
 	}
 	
