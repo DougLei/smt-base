@@ -38,9 +38,9 @@ public class AuthController {
 	// 登录前置处理
 	private void loginPreprocessing(LoginEntity entity, HttpServletRequest request) {
 		if(entity.getProjectCode()==null)
-			entity.setProjectCode(request.getParameter("project"));
+			entity.setProjectCode(request.getParameter("projectcode"));
 		if(entity.getTenantId()==null)
-			entity.setTenantId(request.getParameter("tenant"));
+			entity.setTenantId(request.getParameter("tenantid"));
 		
 		entity.setClientIp(HttpUtil.getClientIp(request));
 		entity.setTenantId(TempTenantId.VALUE); 
@@ -52,7 +52,7 @@ public class AuthController {
 		if(StringUtil.isEmpty(entity.getLoginPwd()))
 			return new Response(entity, "loginPwd", "登录密码不能为空", "smt.base.login.fail.loginpwd.null");
 		if(StringUtil.isEmpty(entity.getTenantId()))
-			return new Response(entity, "tenantId", "租户不能为空", "smt.base.login.fail.tenant.null");
+			return new Response(entity, "tenantId", "租户不能为空", "smt.base.login.fail.tenantid.null");
 		
 		return service.login(entity);
 	}
@@ -92,7 +92,7 @@ public class AuthController {
 		loginPreprocessing(entity, request);
 		
 		if(StringUtil.isEmpty(entity.getProjectCode()))
-			return new Response(entity, "projectCode", "项目编码不能为空", "smt.base.login.fail.project.null");
+			return new Response(entity, "projectCode", "项目编码不能为空", "smt.base.login.fail.projectcode.null");
 		return login_(entity, request);
 	}
 	

@@ -1,9 +1,16 @@
 *********************************************************************************
+写在前面
+*********************************************************************************
+1. api统一前缀: smt-base
+
+
+
+*********************************************************************************
 Auth管理
 *********************************************************************************
 
 --(配置系统)登录
-http://192.168.1.111:8502/clogin
+http://192.168.1.111:8502/smt-base/clogin
 POST
 {
 	"loginName":"", --登录名 
@@ -11,7 +18,7 @@ POST
 }
 
 --(运行系统)登录
-http://192.168.1.111:8502/login
+http://192.168.1.111:8502/smt-base/login
 POST
 {
 	"loginName":"", --登录名 
@@ -20,11 +27,11 @@ POST
 }
 
 --登出
-http://192.168.1.111:8502/loginout
+http://192.168.1.111:8502/smt-base/loginout
 GET
 
 --更新token数据
-http://192.168.1.111:8502/token/update
+http://192.168.1.111:8502/smt-base/token/update
 POST
 {
 	"value":"" , -- token值
@@ -35,12 +42,13 @@ POST
 }
 
 
+
 *********************************************************************************
 项目管理
 *********************************************************************************
 
 --添加
-http://192.168.1.111:8502/project/insert
+http://192.168.1.111:8502/smt-base/project/insert
 POST
 {
 	"parentId": 0, --父项目id, 可为null(根项目), 数字类型 
@@ -51,7 +59,7 @@ POST
 }
 
 --修改
-http://192.168.1.111:8502/project/update
+http://192.168.1.111:8502/smt-base/project/update
 POST
 {
 	"id":1, -- 主键
@@ -63,15 +71,15 @@ POST
 }
 
 --激活
-http://192.168.1.111:8502/project/enable/{projectId}
+http://192.168.1.111:8502/smt-base/project/enable/{projectId}
 POST
 
 --禁用
-http://192.168.1.111:8502/project/disable/{projectId}
+http://192.168.1.111:8502/smt-base/project/disable/{projectId}
 POST
 
 --删除
-http://192.168.1.111:8502/project/delete/{projectId}
+http://192.168.1.111:8502/smt-base/project/delete/{projectId}
 DELETE
 
 
@@ -81,7 +89,7 @@ DELETE
 *********************************************************************************
 
 --添加
-http://192.168.1.111:8502/user/insert
+http://192.168.1.111:8502/smt-base/user/insert
 POST
 {
 	"name":"", --名称, 租户下唯一
@@ -94,7 +102,7 @@ POST
 }
 
 --修改
-http://192.168.1.111:8502/user/update
+http://192.168.1.111:8502/smt-base/user/update
 POST
 {
 	"id":"", --主键
@@ -106,11 +114,11 @@ POST
 }
 
 --删除
-http://192.168.1.111:8502/user/delete/{userId}
+http://192.168.1.111:8502/smt-base/user/delete/{userId}
 DELETE
 
 --开通账户
-http://192.168.1.111:8502/user/account/open
+http://192.168.1.111:8502/smt-base/user/account/open
 POST
 {
 	"userId":"", -- 用户id
@@ -119,14 +127,14 @@ POST
 }
 
 --启用账户
-http://192.168.1.111:8502/user/account/enable
+http://192.168.1.111:8502/smt-base/user/account/enable
 POST
 {
 	"id":"" -- 账户id
 }
 
 --禁用账户
-http://192.168.1.111:8502/user/account/disable
+http://192.168.1.111:8502/smt-base/user/account/disable
 POST
 {
 	"id":"", -- 账户id
@@ -134,11 +142,11 @@ POST
 }
 
 --删除账户
-http://192.168.1.111:8502/user/account/delete/{accountId}
+http://192.168.1.111:8502/smt-base/user/account/delete/{accountId}
 DELETE
 
 --修改账户的登录名和登录密码
-http://192.168.1.111:8502/user/account/name_pwd/update
+http://192.168.1.111:8502/smt-base/user/account/name_pwd/update
 POST
 {
 	"id":"", -- 账户id
@@ -153,7 +161,7 @@ POST
 *********************************************************************************
 
 --添加
-http://192.168.1.111:8502/org/insert
+http://192.168.1.111:8502/smt-base/org/insert
 POST
 {
 	"parentId":1, --父组织机构的id, 可为null
@@ -165,7 +173,7 @@ POST
 }
 
 --修改
-http://192.168.1.111:8502/org/update
+http://192.168.1.111:8502/smt-base/org/update
 POST
 {
 	"id":1, --主键
@@ -178,7 +186,7 @@ POST
 }
 
 --删除
-http://192.168.1.111:8502/org/delete/{orgId}
+http://192.168.1.111:8502/smt-base/org/delete/{orgId}
 DELETE
 
 
@@ -188,7 +196,7 @@ DELETE
 *********************************************************************************
 
 --添加
-http://192.168.1.111:8502/role/insert
+http://192.168.1.111:8502/smt-base/role/insert
 POST
 {
 	"code":"", -- 编码
@@ -198,7 +206,7 @@ POST
 }
 
 --修改
-http://192.168.1.111:8502/role/update
+http://192.168.1.111:8502/smt-base/role/update
 POST
 {
 	"id":1, --主键
@@ -209,7 +217,7 @@ POST
 }
 
 --删除
-http://192.168.1.111:8502/role/delete/{roleId}
+http://192.168.1.111:8502/smt-base/role/delete/{roleId}
 DELETE
 
 
@@ -219,7 +227,7 @@ DELETE
 *********************************************************************************
 
 --添加
-http://192.168.1.111:8502/post/insert
+http://192.168.1.111:8502/smt-base/post/insert
 POST
 {
 	"code":"", -- 编码
@@ -229,7 +237,7 @@ POST
 }
 
 --修改
-http://192.168.1.111:8502/post/update
+http://192.168.1.111:8502/smt-base/post/update
 POST
 {
 	"id":1, --主键
@@ -240,7 +248,7 @@ POST
 }
 
 --删除
-http://192.168.1.111:8502/post/delete/{postId}
+http://192.168.1.111:8502/smt-base/post/delete/{postId}
 DELETE
 
 
@@ -250,7 +258,7 @@ DELETE
 *********************************************************************************
 
 --添加
-http://192.168.1.111:8502/dict/insert
+http://192.168.1.111:8502/smt-base/dict/insert
 POST
 {
 	"code":"", -- 编码
@@ -259,7 +267,7 @@ POST
 }
 
 --修改
-http://192.168.1.111:8502/dict/update
+http://192.168.1.111:8502/smt-base/dict/update
 POST
 {
 	"id":1, --主键
@@ -269,12 +277,12 @@ POST
 }
 
 --删除
-http://192.168.1.111:8502/dict/delete/{dictId}
+http://192.168.1.111:8502/smt-base/dict/delete/{dictId}
 DELETE
 
 
 --添加明细
-http://192.168.1.111:8502/dict/detail/insert
+http://192.168.1.111:8502/smt-base/dict/detail/insert
 POST
 {
 	"dictId":"", -- 关联的数据字典id
@@ -284,7 +292,7 @@ POST
 }
 
 --修改明细
-http://192.168.1.111:8502/dict/detail/update
+http://192.168.1.111:8502/smt-base/dict/detail/update
 POST
 {
 	"id":1, --主键
@@ -295,7 +303,7 @@ POST
 }
 
 --删除明细
-http://192.168.1.111:8502/dict/detail/delete/{detailIds} -- 多个用,分割
+http://192.168.1.111:8502/smt-base/dict/detail/delete/{detailIds} -- 多个用,分割
 DELETE
 
 
@@ -305,7 +313,7 @@ DELETE
 *********************************************************************************
 
 --添加
-http://192.168.1.111:8502/data/rel/insert
+http://192.168.1.111:8502/smt-base/data/rel/insert
 POST
 {
 	"leftKey":"", --左(主)数据key, 目前支持的值(不区分大小写): USER_ID, ORG_CODE, ROLE_CODE, POST_CODE
@@ -316,7 +324,7 @@ POST
 }
 
 --删除
-http://192.168.1.111:8502/data/rel/delete
+http://192.168.1.111:8502/smt-base/data/rel/delete
 POST
 {
 	"leftKey":"", --左(主)数据key, 目前支持的值(不区分大小写): USER_ID, ORG_CODE, ROLE_CODE, POST_CODE

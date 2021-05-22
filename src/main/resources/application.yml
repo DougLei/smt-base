@@ -1,6 +1,8 @@
 server:
    max-http-header-size: 10000
    port: 8502
+   servlet:
+    context-path: /smt-base
    
 jdb:
   orm:

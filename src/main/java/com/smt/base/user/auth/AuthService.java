@@ -39,11 +39,11 @@ public class AuthService {
 	@Transaction
 	public Response login(LoginEntity entity) {
 		if(!entity.getTenantId().equals(TempTenantId.VALUE))
-			return new Response(entity, null, "不存在相关的租户", "smt.base.login.fail.tenant.unexists");
+			return new Response(entity, null, "不存在相关的租户", "smt.base.login.fail.tenantid.unexists");
 		// 不存在这个项目
 		if(entity.getProjectCode() != null 
 				&& SessionContext.getSqlSession().uniqueQuery_("select id from base_project where code=? and tenant_id=?", Arrays.asList(entity.getProjectCode(), entity.getTenantId())) == null)
-			return new Response(entity, null, "不存在编码为[%s]的项目", "smt.base.login.fail.project.unexists", entity.getProjectCode());
+			return new Response(entity, null, "不存在编码为[%s]的项目", "smt.base.login.fail.projectcode.unexists", entity.getProjectCode());
 			
 		// 进行登录验证
 		Account account = SessionContext.getSqlSession().uniqueQuery(Account.class, "select * from base_account where login_name=? and tenant_id=?", Arrays.asList(entity.getLoginName(), entity.getTenantId()));
@@ -115,7 +115,7 @@ public class AuthService {
 		if(data.getProjectCode() != null 
 				&& !data.getProjectCode().equals(entity.getProjectCode())
 				&& SessionContext.getSqlSession().uniqueQuery_("select id from base_project where code=? and tenant_id=?", Arrays.asList(data.getProjectCode(), entity.getTenantId())) == null)
-			return new Response(entity, null, "修改token数据失败, 不存在编码为[%s]的项目", "smt.base.token.update.fail.project.unexists", data.getProjectCode());
+			return new Response(entity, null, "修改token数据失败, 不存在编码为[%s]的项目", "smt.base.token.update.fail.projectcode.unexists", data.getProjectCode());
 		
 		entity.setProjectCode(data.getProjectCode());
 		entity.setLastOpDate(entity.getCurrentDate());

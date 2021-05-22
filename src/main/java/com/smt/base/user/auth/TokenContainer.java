@@ -2,10 +2,10 @@ package com.smt.base.user.auth;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +21,8 @@ import com.smt.parent.code.filters.token.TokenEntity;
 public class TokenContainer {
 	private static final Logger logger = LoggerFactory.getLogger(TokenContainer.class);
 	private boolean GCJobStarted;
-	private final Map<String, String> token_user_container = new HashMap<String, String>(128);
-	private final Map<String, List<TokenEntity>> user_tokens_container = new HashMap<String, List<TokenEntity>>(128);
+	private final Map<String, String> token_user_container = new ConcurrentHashMap<String, String>(128);
+	private final Map<String, List<TokenEntity>> user_tokens_container = new ConcurrentHashMap<String, List<TokenEntity>>(128);
 	
 	@Autowired
 	private AuthConfigurationProperties properties;
