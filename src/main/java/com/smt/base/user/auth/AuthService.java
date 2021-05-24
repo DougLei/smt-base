@@ -15,6 +15,7 @@ import com.smt.base.rel.DataRelWrapper;
 import com.smt.base.rel.Key;
 import com.smt.base.user.Account;
 import com.smt.base.user.UserService;
+import com.smt.parent.code.filters.log.LogContext;
 import com.smt.parent.code.filters.token.TokenEntity;
 import com.smt.parent.code.response.Response;
 
@@ -50,7 +51,11 @@ public class AuthService {
 			
 		// 进行登录验证
 		Account account = SessionContext.getSqlSession().uniqueQuery(Account.class, "select * from base_account where login_name=? and tenant_id=?", Arrays.asList(entity.getLoginName(), entity.getTenantId()));
-		if(account == null || !account.getLoginPwd().equals(DigestUtils.md5Hex(entity.getLoginPwd()+account.getUserId())))
+		if(account == null)
+			return new Response(entity, null, "用户名或密码错误", "smt.base.login.fail.name.pwd.error");
+		
+		LogContext.loggingUserId(account.getUserId()); // 记录下用户id
+		if(!account.getLoginPwd().equals(DigestUtils.md5Hex(entity.getLoginPwd()+account.getUserId())))
 			return new Response(entity, null, "用户名或密码错误", "smt.base.login.fail.name.pwd.error");
 		if(account.getIsDisabled() == 1)
 			return new Response(entity, null, "账户已被禁用, 请联系管理员", "smt.base.login.fail.account.disabled");
@@ -66,6 +71,8 @@ public class AuthService {
 		token.setValue(UUID.randomUUID().toString());
 		token.setAccountId(account.getId());
 		token.setUserId(account.getUserId());
+		Object[] user = SessionContext.getSqlSession().uniqueQuery_("select name, real_name from base_user where id=?", Arrays.asList(account.getUserId()));
+		token.setUserName(user[1]!=null?user[1].toString():user[0].toString());
 		 
 		// 如果ProjectCode不为空时,  查询用户相关的数据
 		if(entity.getProjectCode() != null) {
