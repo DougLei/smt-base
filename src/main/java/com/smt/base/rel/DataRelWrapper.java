@@ -16,7 +16,7 @@ public class DataRelWrapper {
 	private String tenantId;
 	
 	public DataRelWrapper() {
-		this(TokenContext.get().getTenantId());
+		this.tenantId = TokenContext.get().getTenantId();
 	}
 	public DataRelWrapper(String tenantId) {
 		this.tenantId = tenantId;
