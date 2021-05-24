@@ -1,7 +1,5 @@
 package com.smt.base.rel;
 
-import java.util.Date;
-
 /**
  * 
  * @author DougLei
@@ -12,19 +10,15 @@ public class DataRel {
 	private String leftValue;
 	private String rightKey;
 	private String rightValue;
-	private String createUserId;
-	private Date createDate;
 	private String projectCode;
 	private String tenantId;
 	
 	public DataRel() {}
-	public DataRel(String leftKey, String leftValue, String rightKey, String rightValue, String createUserId, Date createDate, String projectCode, String tenantId) {
+	public DataRel(String leftKey, String leftValue, String rightKey, String rightValue, String projectCode, String tenantId) {
 		this.leftKey = leftKey;
 		this.leftValue = leftValue;
 		this.rightKey = rightKey;
 		this.rightValue = rightValue;
-		this.createUserId = createUserId;
-		this.createDate = createDate;
 		this.projectCode = projectCode;
 		this.tenantId = tenantId;
 	}
@@ -58,18 +52,6 @@ public class DataRel {
 	}
 	public void setRightValue(String rightValue) {
 		this.rightValue = rightValue;
-	}
-	public String getCreateUserId() {
-		return createUserId;
-	}
-	public void setCreateUserId(String createUserId) {
-		this.createUserId = createUserId;
-	}
-	public Date getCreateDate() {
-		return createDate;
-	}
-	public void setCreateDate(Date createDate) {
-		this.createDate = createDate;
 	}
 	public String getProjectCode() {
 		return projectCode;

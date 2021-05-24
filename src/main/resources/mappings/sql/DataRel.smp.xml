@@ -2,31 +2,45 @@
 <mapping-configuration>
 	<sql namespace="DataRel">
 		
-		<!-- 获取指定(LeftKey+LeftValue+RightKey)下的RightValue集合 -->
-		<content name="getRightValues" type="select">
-			select right_value from base_data_rel where left_key=#{leftKey} and left_value=#{leftValue} and right_key=#{rightKey} and tenant_id=#{tenantId} 
-			<if test="projectCode != null">
-				and project_code=#{projectCode}
-			</if>
+		<!-- 删除Value集合 -->
+		<content name="deleteValues" type="delete">
+			<switch>
+				<if test="flag == 1">
+					delete base_data_rel where left_key=#{parentKey} and left_value=#{parentValue} and right_key=#{childKey} and tenant_id=#{tenantId} 
+				</if>
+				<else>
+					delete base_data_rel where right_key=#{parentKey} and right_value=#{parentValue} and left_key=#{childKey} and tenant_id=#{tenantId} 
+				</else>
+			</switch>
+		
+			<switch>
+				<if test="projectCode == null">
+					and project_code is null
+				</if>
+				<else>
+					and project_code=#{projectCode}
+				</else>
+			</switch>
 		</content>
 		
-		<!-- 删除指定(LeftKey+LeftValue+RightKey)下的所有RightValue -->
-		<content name="deleteAll" type="delete">
-			delete base_data_rel where left_key=#{leftKey} and left_value=#{leftValue} and right_key=#{rightKey} and tenant_id=#{tenantId} 
-			<if test="projectCode != null">
-				and project_code=#{projectCode}
-			</if>
-		</content>
-		
-		<!--  删除数据关联关系 -->
-		<content name="delete" type="delete">
-			delete base_data_rel where left_key=#{[0].leftKey} and left_value=#{[0].leftValue} and right_key=#{rightKey} and tenant_id=#{[0].tenantId} and 
-			<if test="[0].projectCode != null">
-				project_code=#{[0].projectCode} and 
-			</if>
-			<foreach collection="list" alias="rel" open="right_value in (" separator="," close=")">
-				#{rel.rightValue}
-			</foreach> 
+		<!-- 查询Value集合 -->
+		<content name="queryValues" type="delete">
+			<switch>
+				<if test="flag == 1">
+					select right_value from base_data_rel where left_key=#{parentKey} and left_value=#{parentValue} and right_key=#{childKey} and project_code is null and tenant_id=#{tenantId} 
+					<if test="projectCode != null">
+						union
+						select right_value from base_data_rel where left_key=#{parentKey} and left_value=#{parentValue} and right_key=#{childKey} and project_code=#{projectCode} and tenant_id=#{tenantId} 
+					</if>
+				</if>
+				<else>
+					select left_value from base_data_rel where right_key=#{parentKey} and right_value=#{parentValue} and left_key=#{childKey} and project_code is null and tenant_id=#{tenantId} 
+					<if test="projectCode != null">
+						union
+						select left_value from base_data_rel where right_key=#{parentKey} and right_value=#{parentValue} and left_key=#{childKey} and project_code=#{projectCode} and tenant_id=#{tenantId} 
+					</if>
+				</else>
+			</switch>
 		</content>
 		
 	</sql>

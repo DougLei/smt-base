@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.query.QueryCriteria;
+import com.smt.parent.code.query.QueryCriteriaEntity;
+import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
 
@@ -22,6 +26,9 @@ public class UserController {
 	
 	@Autowired
 	private UserService service;
+	
+	@Autowired
+	private QueryExecutor queryExecutor;
 	
 	/**
 	 * 添加用户
@@ -55,6 +62,17 @@ public class UserController {
 	@RequestMapping(value="/delete/{userId}", method=RequestMethod.DELETE)
 	public Response delete(@PathVariable String userId) {
 		return service.delete(userId);
+	}
+	
+	/**
+	 * 查询用户信息
+	 * @param entity
+	 * @return
+	 */
+	@LoggingResponse(loggingBody=false)
+	@RequestMapping(value="/query", method=RequestMethod.POST)
+	public Response query(@QueryCriteria QueryCriteriaEntity entity) {
+		return queryExecutor.execute("QueryUserList", TokenContext.get().getTenantId(), entity);
 	}
 	
 	// ------------------------------------------------------------------------------------------------------

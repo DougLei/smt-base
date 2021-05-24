@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.douglei.tools.StringUtil;
 import com.douglei.tools.web.HttpUtil;
+import com.smt.parent.code.filters.FilterEnum;
 import com.smt.parent.code.filters.log.LogContext;
 import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.filters.token.TokenEntity;
@@ -161,6 +162,11 @@ public class AuthController {
 	@LoggingResponse
 	@RequestMapping(value = "/token/update", method = RequestMethod.POST)
 	public Response updateToken(@RequestBody TokenEntity data, HttpServletRequest request) {
+		if(data.getValue() == null)
+			data.setValue(request.getHeader(FilterEnum.TOKEN.getHeaderName()));
+		if(data.getValue() == null)
+			return new Response(null, null, "token不能为空", "smt.base.token.update.fail.value.null");
+			
 		TokenValidateResult result = validate_(data.getValue(), HttpUtil.getClientIp(request));
 		if(result.getEntity() != null) 
 			LogContext.loggingUserId(result.getEntity().getUserId());

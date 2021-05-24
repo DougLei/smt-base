@@ -2,7 +2,6 @@ package com.smt.base.user.auth;
 
 import java.util.Arrays;
 import java.util.Date;
-import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.codec.digest.DigestUtils;
@@ -11,7 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
-import com.smt.base.rel.DataRel;
+import com.smt.base.rel.DataRelService;
+import com.smt.base.rel.DataRelWrapper;
 import com.smt.base.rel.Key;
 import com.smt.base.user.Account;
 import com.smt.base.user.UserService;
@@ -27,6 +27,9 @@ public class AuthService {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private DataRelService dataRelService;
 	
 	@Autowired
 	private TokenContainer tokenContainer;
@@ -68,15 +71,17 @@ public class AuthService {
 		if(entity.getProjectCode() != null) {
 			token.setProjectCode(entity.getProjectCode());
 			
-			DataRel rel = new DataRel();
-			rel.setLeftKey(Key.USER_ID.name());
-			rel.setLeftValue(account.getUserId());
-			rel.setProjectCode(entity.getProjectCode());
-			rel.setTenantId(entity.getTenantId());
+			DataRelWrapper wrapper = new DataRelWrapper();
+			wrapper.setParentKeyInstance(Key.USER_ID);
+			wrapper.setParentValue(account.getUserId());
+			wrapper.setProjectCode(entity.getProjectCode());
 			
-			token.setOrgs(getRightValuesByUserId(rel, Key.ORG_CODE));
-			token.setRoles(getRightValuesByUserId(rel, Key.ROLE_CODE));
-			token.setPosts(getRightValuesByUserId(rel, Key.POST_CODE));
+			wrapper.setChildKeyInstance(Key.ORG_CODE);
+			token.setOrgs(dataRelService.queryValues(wrapper));
+			wrapper.setChildKeyInstance(Key.ROLE_CODE);
+			token.setRoles(dataRelService.queryValues(wrapper));
+			wrapper.setChildKeyInstance(Key.POST_CODE);
+			token.setPosts(dataRelService.queryValues(wrapper));
 		}
 		
 		token.setTenantId(entity.getTenantId());
@@ -88,18 +93,6 @@ public class AuthService {
 		// 存储token, 并构建响应体
 		tokenContainer.add(token);
 		return new Response(token);
-	}
-	private String[] getRightValuesByUserId(DataRel rel, Key rightKey) {
-		rel.setRightKey(rightKey.name());
-		
-		List<Object[]> results = SessionContext.getSQLSession().query_("Auth", "getRightValues", rel);
-		if(results.isEmpty())
-			return null;
-		
-		String[] rightValues = new String[results.size()];
-		for (int i = 0; i < results.size(); i++) 
-			rightValues[i] = results.get(i)[0].toString();
-		return rightValues;
 	}
 	
 	// ------------------------------------------------------------------------------------------------------

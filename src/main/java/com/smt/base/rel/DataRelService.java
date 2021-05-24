@@ -1,13 +1,14 @@
 package com.smt.base.rel;
 
+import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
+import com.douglei.orm.context.PropagationBehavior;
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
+import com.douglei.tools.StringUtil;
 
 /**
  * 
@@ -15,66 +16,45 @@ import com.douglei.orm.context.TransactionComponent;
  */
 @TransactionComponent
 public class DataRelService {
-	
-	// 获取指定(LeftKey+LeftValue+RightKey)下的RightValue集合
-	private Set<String> getRightValues(DataRel rel) {
-		List<Object[]> results = SessionContext.getSQLSession().query_("DataRel", "getRightValues", rel);
-		if(results.isEmpty())
-			return Collections.emptySet();
-		
-		HashSet<String> rightValues = new HashSet<String>(16);
-		results.forEach(result -> rightValues.add(result[0].toString()));
-		return rightValues;
-	}
-	
+
 	/**
-	 * 添加数据关联关系
-	 * @param list
+	 * 增删改数据关联关系
+	 * @param wrapper
 	 */
 	@Transaction
-	public void insert(List<DataRel> list) {
-		Set<String> existsRightValues = getRightValues(list.get(0));
-		if(!existsRightValues.isEmpty()) {
-			for(int i=0; i<list.size();i++) {
-				if(existsRightValues.contains(list.get(i).getRightValue())) 
-					list.remove(i--);
-			}
-			
-			if(list.isEmpty())
-				return;
+	public void operate(DataRelWrapper wrapper) {
+		// 先删除旧的关联关系数据
+		SessionContext.getSQLSession().executeUpdate("DataRel", "deleteValues", wrapper);
+		
+		// 再添加新的关联关系数据
+		if(StringUtil.isEmpty(wrapper.getChildValues()))
+			return;
+		
+		String[] childValues = wrapper.getChildValues().split(",");
+		List<DataRel> list = new ArrayList<DataRel>(childValues.length);
+		if(wrapper.getFlag() == 1) {
+			for(String childValue: childValues)
+				list.add(new DataRel(wrapper.getParentKey(), wrapper.getParentValue(), wrapper.getChildKey(), childValue, wrapper.getProjectCode(), wrapper.getTenantId()));
+		}else {
+			for(String childValue: childValues)
+				list.add(new DataRel(wrapper.getChildKey(), childValue, wrapper.getParentKey(), wrapper.getParentValue(), wrapper.getProjectCode(), wrapper.getTenantId()));
 		}
 		SessionContext.getTableSession().save(list);
 	}
 
 	/**
-	 * 删除指定(LeftKey+LeftValue+RightKey)下的所有RightValue
-	 * @param rel
+	 * 查询Value集合
+	 * @param wrapper
+	 * @return
 	 */
-	@Transaction
-	public void deleteAll(DataRel rel) {
-		if(SessionContext.getSQLSession().query_("DataRel", "getRightValues", rel).isEmpty())
-			return;
+	@Transaction(propagationBehavior=PropagationBehavior.SUPPORTS)
+	public List<String> queryValues(DataRelWrapper wrapper) {
+		List<Object[]> results = SessionContext.getSQLSession().query_("DataRel", "queryValues", wrapper);
+		if(results.isEmpty())
+			return Collections.emptyList();
 		
-		SessionContext.getSQLSession().executeUpdate("DataRel", "deleteAll", rel);
-	}
-	
-	/**
-	 * 删除数据关联关系
-	 * @param list
-	 */
-	@Transaction
-	public void delete(List<DataRel> list) {
-		Set<String> existsRightValues = getRightValues(list.get(0));
-		if(existsRightValues.isEmpty())
-			return;
-		
-		for(int i=0; i<list.size();i++) {
-			if(!existsRightValues.contains(list.get(i).getRightValue())) 
-				list.remove(i--);
-		}
-		if(list.isEmpty())
-			return;
-		
-		SessionContext.getSQLSession().executeUpdate("DataRel", "delete", list);
+		List<String> values = new ArrayList<String>(results.size());
+		results.forEach(result -> values.add(result[0].toString()));
+		return values;
 	}
 }
