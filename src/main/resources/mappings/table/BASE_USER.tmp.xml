@@ -4,7 +4,7 @@
 		<columns>
 			<column name="ID" property="id" dataType="char" length="36" />
 			<column name="TYPE" property="type" dataType="number" length="1" nullable="false"/>
-			<column name="NAME_" property="name" dataType="nstring" length="50" nullable="false"/>
+			<column name="NAME" property="name" dataType="nstring" length="50" nullable="false"/>
 			<column name="REAL_NAME" property="realName" dataType="nstring" length="50" nullable="false"/>
 			<column name="SEX" property="sex" dataType="number" length="1"/>
 			<column name="PHONE_NUM" property="phoneNum" dataType="char" length="11"/>

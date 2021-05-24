@@ -71,7 +71,7 @@ public class AuthService {
 		if(entity.getProjectCode() != null) {
 			token.setProjectCode(entity.getProjectCode());
 			
-			DataRelWrapper wrapper = new DataRelWrapper();
+			DataRelWrapper wrapper = new DataRelWrapper(entity.getTenantId());
 			wrapper.setParentKeyInstance(Key.USER_ID);
 			wrapper.setParentValue(account.getUserId());
 			wrapper.setProjectCode(entity.getProjectCode());

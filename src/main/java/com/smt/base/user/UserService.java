@@ -23,7 +23,7 @@ public class UserService {
 	// 验证name是否存在
 	private boolean nameExists(User user) {
 		return SessionContext.getSqlSession().uniqueQuery_(
-				"select id from base_user where name_=? and tenant_id=?", 
+				"select id from base_user where name=? and tenant_id=?", 
 				Arrays.asList(user.getName(), user.getTenantId())) != null;
 	}
 	// 验证LoginName是否存在

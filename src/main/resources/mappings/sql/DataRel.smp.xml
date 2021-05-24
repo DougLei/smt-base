@@ -24,7 +24,7 @@
 		</content>
 		
 		<!-- 查询Value集合 -->
-		<content name="queryValues" type="delete">
+		<content name="queryValues" type="select">
 			<switch>
 				<if test="flag == 1">
 					select right_value from base_data_rel where left_key=#{parentKey} and left_value=#{parentValue} and right_key=#{childKey} and project_code is null and tenant_id=#{tenantId} 

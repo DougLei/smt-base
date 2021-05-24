@@ -13,7 +13,14 @@ public class DataRelWrapper {
 	private Key childKey;
 	private String childValues;
 	private String projectCode;
-	private String tenantId = TokenContext.get().getTenantId();
+	private String tenantId;
+	
+	public DataRelWrapper() {
+		this(TokenContext.get().getTenantId());
+	}
+	public DataRelWrapper(String tenantId) {
+		this.tenantId = tenantId;
+	}
 	
 	public Integer getFlag() {
 		if(flag == null) 

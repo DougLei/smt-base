@@ -45,7 +45,7 @@
 							from user_role_temp_tb urtt
 				
 				)
-			select id, isnull(real_name, name_) name, uo.org_id, uo.org_name, up.post_id, up.post_name, ur.role_id, ur.role_name from base_user user_
+			select id, isnull(real_name, name) name, uo.org_id, uo.org_name, up.post_id, up.post_name, ur.role_id, ur.role_name from base_user user_
 				left join user_org_tb uo on (user_.id = uo.user_id)
 				left join user_post_tb up on (user_.id = up.user_id)
 				left join user_role_tb ur on (user_.id = ur.user_id)
