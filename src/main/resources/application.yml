@@ -39,6 +39,7 @@ smt:
         token:
           ignore-url-patterns:
           - /clogin
+          - /vclogin
           - /login
           - /token/validate/*
           - /token/update
