@@ -65,7 +65,7 @@ public class AuthController {
 	 * @return
 	 */
 	@LoggingResponse
-	@RequestMapping(value = "/clogin", method = RequestMethod.POST)
+	@RequestMapping(value = {"/clogin", "/vclogin"}, method = RequestMethod.POST)
 	public Response clogin(@RequestBody LoginEntity entity, HttpServletRequest request) {
 		loginPreprocessing(entity, request);
 		
