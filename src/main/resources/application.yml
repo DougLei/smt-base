@@ -16,7 +16,7 @@ spring:
         username: sa
         password: root
   application: 
-      name: smt-base
+      name: smt-base-douglei
 
 smt:
   base:
