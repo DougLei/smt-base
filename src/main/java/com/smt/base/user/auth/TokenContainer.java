@@ -40,8 +40,8 @@ public class TokenContainer {
 		
 		// 如果当前用户已经有TokenEntity
 		if(entities.size() > 0) {
-			// 如果启用了客户端ip限制, 需要将同clientType的数据移除 
-			if(properties.isEnableClientIpLimit()) {
+			// 如果启用客户端类型限制, 需要将同clientType的数据移除 
+			if(properties.isEnableClientTypeLimit()) {
 				for(int i=0; i<entities.size(); i++) {
 					if(entities.get(i).getClientType() == entity.getClientType()) {
 						token_user_container.remove(entities.remove(i).getValue());

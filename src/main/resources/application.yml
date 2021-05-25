@@ -21,7 +21,7 @@ spring:
 smt:
   base:
     auth:
-      enable-client-ip-limit: false
+      enable-client-type-limit: false
       token-valid-time: 120
       clogin-accounts:
       - login-name: admin

@@ -123,7 +123,7 @@ public class AuthController {
 		if(entity == null)
 			return new TokenValidateResult(null, "无效token", "smt.base.token.validate.invalid");
 		
-		if(properties.isEnableClientIpLimit() && !entity.getClientIp().equals(clientIp)) {
+		if(!entity.getClientIp().equals(clientIp)) {
 			tokenContainer.remove(token);
 			return new TokenValidateResult(entity, "客户端ip变动, 请重新登录", "smt.base.token.validate.ip.changed");
 		}
