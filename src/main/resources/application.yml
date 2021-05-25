@@ -25,7 +25,7 @@ smt:
       token-valid-time: 120
       clogin-accounts:
       - login-name: admin
-        tenant-id: 200ceb26807d6bf99fd6f4f0d1ca54d40001
+        tenant-id: 200ceb26807d6bf99fd6f4f0d1ca54d40002
   parent:
     code:
       filter:
