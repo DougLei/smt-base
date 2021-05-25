@@ -2,10 +2,14 @@ package com.smt.base.post;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.smt.base.SmtBaseException;
+import com.smt.base.rel.DataRelService;
+import com.smt.base.rel.Type;
 import com.smt.parent.code.response.Response;
 
 /**
@@ -14,6 +18,9 @@ import com.smt.parent.code.response.Response;
  */
 @TransactionComponent
 public class PostService {
+	
+	@Autowired
+	private DataRelService dataRelService;
 
 	// 验证code是否存在
 	private boolean codeExists(Post post) {
@@ -67,6 +74,7 @@ public class PostService {
 			throw new SmtBaseException("删除失败, 不存在id为["+postId+"]的岗位");
 		
 		SessionContext.getSqlSession().executeUpdate("update base_post set is_deleted=1 where id=?", Arrays.asList(postId));
+		dataRelService.deleteAll(Type.POST_CODE, post.getCode());
 		return new Response(postId);
 	}
 }

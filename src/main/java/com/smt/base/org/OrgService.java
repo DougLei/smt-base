@@ -3,10 +3,14 @@ package com.smt.base.org;
 import java.util.Arrays;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.smt.base.SmtBaseException;
+import com.smt.base.rel.DataRelService;
+import com.smt.base.rel.Type;
 import com.smt.parent.code.response.Response;
 
 /**
@@ -15,6 +19,9 @@ import com.smt.parent.code.response.Response;
  */
 @TransactionComponent
 public class OrgService {
+	
+	@Autowired
+	private DataRelService dataRelService;
 
 	// 验证code是否存在
 	private boolean codeExists(Org org) {
@@ -99,6 +106,7 @@ public class OrgService {
 			return new Response(orgId, null, "删除失败, 当前组织机构/部门下, 还存在[%d]个子组织机构/部门", "smt.base.org.delete.fail.children.exists", childrenCount);
 		
 		SessionContext.getSqlSession().executeUpdate("update base_org set is_deleted=1 where id=?", list);
+		dataRelService.deleteAll(Type.ORG_CODE, org.getCode());
 		return new Response(orgId);
 	}
 }

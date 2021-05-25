@@ -8,9 +8,9 @@ import com.smt.parent.code.filters.token.TokenContext;
  */
 public class DataRelWrapper {
 	private Integer flag; // 1表示parent的value在left, 2表示parent的value在right
-	private Key parentKey;
+	private Type parentType;
 	private String parentValue;
-	private Key childKey;
+	private Type childType;
 	private String childValues;
 	private String projectCode;
 	private String tenantId;
@@ -24,17 +24,17 @@ public class DataRelWrapper {
 	
 	public Integer getFlag() {
 		if(flag == null) 
-			flag = parentKey.getLevel() >= childKey.getLevel()?1:2;
+			flag = parentType.getLevel() >= childType.getLevel()?1:2;
 		return flag;
 	}
-	public String getParentKey() {
-		return parentKey.name();
+	public String getParentType() {
+		return parentType.name();
 	}
-	public void setParentKey(String parentKey) {
-		this.parentKey = Key.valueOf(parentKey.toUpperCase());
+	public void setParentType(String parentType) {
+		this.parentType = Type.valueOf(parentType.toUpperCase());
 	}
-	public void setParentKeyInstance(Key parentKey) {
-		this.parentKey = parentKey;
+	public void setParentTypeInstance(Type parentType) {
+		this.parentType = parentType;
 	}
 	public String getParentValue() {
 		return parentValue;
@@ -42,14 +42,14 @@ public class DataRelWrapper {
 	public void setParentValue(String parentValue) {
 		this.parentValue = parentValue;
 	}
-	public String getChildKey() {
-		return childKey.name();
+	public String getChildType() {
+		return childType.name();
 	}
-	public void setChildKey(String childKey) {
-		this.childKey = Key.valueOf(childKey.toUpperCase());
+	public void setChildType(String childType) {
+		this.childType = Type.valueOf(childType.toUpperCase());
 	}
-	public void setChildKeyInstance(Key childKey) {
-		this.childKey = childKey;
+	public void setChildTypeInstance(Type childType) {
+		this.childType = childType;
 	}
 	public String getChildValues() {
 		return childValues;

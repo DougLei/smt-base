@@ -2,10 +2,14 @@ package com.smt.base.role;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.smt.base.SmtBaseException;
+import com.smt.base.rel.DataRelService;
+import com.smt.base.rel.Type;
 import com.smt.parent.code.response.Response;
 
 /**
@@ -15,6 +19,9 @@ import com.smt.parent.code.response.Response;
 @TransactionComponent
 public class RoleService {
 
+	@Autowired
+	private DataRelService dataRelService;
+	
 	// 验证code是否存在
 	private boolean codeExists(Role role) {
 		return SessionContext.getSqlSession().uniqueQuery_(
@@ -67,6 +74,7 @@ public class RoleService {
 			throw new SmtBaseException("删除失败, 不存在id为["+roleId+"]的角色");
 		
 		SessionContext.getSqlSession().executeUpdate("update base_role set is_deleted=1 where id=?", Arrays.asList(roleId));
+		dataRelService.deleteAll(Type.ROLE_CODE, role.getCode());
 		return new Response(roleId);
 	}
 }

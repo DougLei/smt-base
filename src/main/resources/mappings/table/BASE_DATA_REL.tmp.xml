@@ -3,9 +3,9 @@
 	<table name="BASE_DATA_REL" class="com.smt.base.rel.DataRel" createMode="create" strict="true">
 		<columns>
 			<column name="ID" property="id" dataType="number" length="10" />
-			<column name="LEFT_KEY" property="leftKey" dataType="string" length="15" nullable="false"/>
+			<column name="LEFT_TYPE" property="leftType" dataType="string" length="15" nullable="false"/>
 			<column name="LEFT_VALUE" property="leftValue" dataType="string" length="50" nullable="false"/>
-			<column name="RIGHT_KEY" property="rightKey" dataType="string" length="15" nullable="false"/>
+			<column name="RIGHT_TYPE" property="rightType" dataType="string" length="15" nullable="false"/>
 			<column name="RIGHT_VALUE" property="rightValue" dataType="string" length="50" nullable="false"/>
 			<column name="PROJECT_CODE" property="projectCode" dataType="string" length="50" />
 			<column name="TENANT_ID" property="tenantId" dataType="char" length="36" nullable="false"/>

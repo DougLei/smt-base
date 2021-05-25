@@ -3,6 +3,7 @@ package com.smt.base.user;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 
 import com.douglei.orm.context.SessionContext;
@@ -10,6 +11,8 @@ import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.douglei.tools.StringUtil;
 import com.smt.base.SmtBaseException;
+import com.smt.base.rel.DataRelService;
+import com.smt.base.rel.Type;
 import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.response.Response;
 
@@ -19,6 +22,9 @@ import com.smt.parent.code.response.Response;
  */
 @TransactionComponent
 public class UserService {
+	
+	@Autowired
+	private DataRelService dataRelService;
 	
 	// 验证name是否存在
 	private boolean nameExists(User user) {
@@ -95,6 +101,7 @@ public class UserService {
 		
 		// 用户信息置于删除状态
 		SessionContext.getSqlSession().executeUpdate("update base_user set is_deleted=1 where id=?", Arrays.asList(userId));
+		dataRelService.deleteAll(Type.USER_ID, userId);
 		return new Response(userId);
 	}
 	

@@ -12,7 +12,7 @@ import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.smt.base.rel.DataRelService;
 import com.smt.base.rel.DataRelWrapper;
-import com.smt.base.rel.Key;
+import com.smt.base.rel.Type;
 import com.smt.base.user.Account;
 import com.smt.base.user.UserService;
 import com.smt.parent.code.filters.log.LogContext;
@@ -79,15 +79,15 @@ public class AuthService {
 			token.setProjectCode(entity.getProjectCode());
 			
 			DataRelWrapper wrapper = new DataRelWrapper(entity.getTenantId());
-			wrapper.setParentKeyInstance(Key.USER_ID);
+			wrapper.setParentTypeInstance(Type.USER_ID);
 			wrapper.setParentValue(account.getUserId());
 			wrapper.setProjectCode(entity.getProjectCode());
 			
-			wrapper.setChildKeyInstance(Key.ORG_CODE);
+			wrapper.setChildTypeInstance(Type.ORG_CODE);
 			token.setOrgs(dataRelService.queryValues(wrapper));
-			wrapper.setChildKeyInstance(Key.ROLE_CODE);
+			wrapper.setChildTypeInstance(Type.ROLE_CODE);
 			token.setRoles(dataRelService.queryValues(wrapper));
-			wrapper.setChildKeyInstance(Key.POST_CODE);
+			wrapper.setChildTypeInstance(Type.POST_CODE);
 			token.setPosts(dataRelService.queryValues(wrapper));
 		}
 		

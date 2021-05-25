@@ -1,6 +1,7 @@
 package com.smt.base.rel;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -9,6 +10,7 @@ import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.douglei.tools.StringUtil;
+import com.smt.parent.code.filters.token.TokenContext;
 
 /**
  * 
@@ -34,10 +36,10 @@ public class DataRelService {
 		List<DataRel> list = new ArrayList<DataRel>(childValues.length);
 		if(wrapper.getFlag() == 1) {
 			for(String childValue: childValues)
-				list.add(new DataRel(wrapper.getParentKey(), wrapper.getParentValue(), wrapper.getChildKey(), childValue, wrapper.getProjectCode(), wrapper.getTenantId()));
+				list.add(new DataRel(wrapper.getParentType(), wrapper.getParentValue(), wrapper.getChildType(), childValue, wrapper.getProjectCode(), wrapper.getTenantId()));
 		}else {
 			for(String childValue: childValues)
-				list.add(new DataRel(wrapper.getChildKey(), childValue, wrapper.getParentKey(), wrapper.getParentValue(), wrapper.getProjectCode(), wrapper.getTenantId()));
+				list.add(new DataRel(wrapper.getChildType(), childValue, wrapper.getParentType(), wrapper.getParentValue(), wrapper.getProjectCode(), wrapper.getTenantId()));
 		}
 		SessionContext.getTableSession().save(list);
 	}
@@ -56,5 +58,18 @@ public class DataRelService {
 		List<String> values = new ArrayList<String>(results.size());
 		results.forEach(result -> values.add(result[0].toString()));
 		return values;
+	}
+	
+	/**
+	 * 删除指定type和value的所有数据
+	 * @param type
+	 * @param value
+	 * @return 
+	 */
+	@Transaction
+	public int deleteAll(Type type, String value) {
+		List<Object> params = Arrays.asList(type.name(), value, TokenContext.get().getTenantId());
+		return SessionContext.getSqlSession().executeUpdate("delete base_data_rel where left_type=? and left_value=? and tenant_id=?", params) 
+				+ SessionContext.getSqlSession().executeUpdate("delete base_data_rel where right_type=? and right_value=? and tenant_id=?", params);
 	}
 }

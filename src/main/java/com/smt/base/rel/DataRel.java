@@ -6,18 +6,18 @@ package com.smt.base.rel;
  */
 public class DataRel {
 	private int id;
-	private String leftKey;
+	private String leftType;
 	private String leftValue;
-	private String rightKey;
+	private String rightType;
 	private String rightValue;
 	private String projectCode;
 	private String tenantId;
 	
 	public DataRel() {}
-	public DataRel(String leftKey, String leftValue, String rightKey, String rightValue, String projectCode, String tenantId) {
-		this.leftKey = leftKey;
+	public DataRel(String leftType, String leftValue, String rightType, String rightValue, String projectCode, String tenantId) {
+		this.leftType = leftType;
 		this.leftValue = leftValue;
-		this.rightKey = rightKey;
+		this.rightType = rightType;
 		this.rightValue = rightValue;
 		this.projectCode = projectCode;
 		this.tenantId = tenantId;
@@ -29,11 +29,11 @@ public class DataRel {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public String getLeftKey() {
-		return leftKey;
+	public String getLeftType() {
+		return leftType;
 	}
-	public void setLeftKey(String leftKey) {
-		this.leftKey = leftKey;
+	public void setLeftType(String leftType) {
+		this.leftType = leftType;
 	}
 	public String getLeftValue() {
 		return leftValue;
@@ -41,11 +41,11 @@ public class DataRel {
 	public void setLeftValue(String leftValue) {
 		this.leftValue = leftValue;
 	}
-	public String getRightKey() {
-		return rightKey;
+	public String getRightType() {
+		return rightType;
 	}
-	public void setRightKey(String rightKey) {
-		this.rightKey = rightKey;
+	public void setRightType(String rightType) {
+		this.rightType = rightType;
 	}
 	public String getRightValue() {
 		return rightValue;
