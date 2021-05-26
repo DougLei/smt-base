@@ -24,6 +24,7 @@ public class UserBuilder {
 	// 构建User实例, 设置基础数据
 	private User build() {
 		User user = new User();
+		user.setId(id==null?UUID.randomUUID().toString():id);
 		user.setName(name);
 		user.setRealName(realName);
 		user.setSex(sex);
@@ -41,7 +42,6 @@ public class UserBuilder {
 		User user = build();
 		
 		TokenEntity token = TokenContext.get();
-		user.setId(UUID.randomUUID().toString());
 		user.setCreateUserId(token.getUserId());
 		user.setCreateDate(token.getCurrentDate());
 		user.setTenantId(token.getTenantId());
@@ -57,7 +57,6 @@ public class UserBuilder {
 	 */
 	public User build4Update() {
 		User user = build();
-		user.setId(id);
 		user.setTenantId(TokenContext.get().getTenantId());
 		return user;
 	}

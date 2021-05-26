@@ -6,7 +6,7 @@ package com.smt.base.dict.entity;
  */
 public class DictDetail {
 	private int id;
-	private int dictId;
+	private String dictId;
 	private String key;
 	private String value;
 	private String description;
@@ -17,10 +17,10 @@ public class DictDetail {
 	public void setId(int id) {
 		this.id = id;
 	}
-	public int getDictId() {
+	public String getDictId() {
 		return dictId;
 	}
-	public void setDictId(int dictId) {
+	public void setDictId(String dictId) {
 		this.dictId = dictId;
 	}
 	public String getKey() {

@@ -71,7 +71,7 @@ public class DictService {
 	 * @return
 	 */
 	@Transaction
-	public Response delete(int dictId) {
+	public Response delete(String dictId) {
 		List<Object> list = Arrays.asList(dictId);
 		if(SessionContext.getSqlSession().uniqueQuery_("select id from base_dict where id=?", list) == null)
 			throw new SmtBaseException("删除失败, 不存在id为["+dictId+"]的数据字典");
@@ -124,7 +124,7 @@ public class DictService {
 	 * @param detailIds
 	 */
 	@Transaction
-	public void deleteDetail(List<Integer> detailIds) {
+	public void deleteDetail(List<String> detailIds) {
 		SessionContext.getSQLSession().executeUpdate("Dict", "deleteDetail", detailIds);
 	}
 }

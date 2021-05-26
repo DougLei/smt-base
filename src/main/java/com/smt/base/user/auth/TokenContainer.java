@@ -122,8 +122,9 @@ public class TokenContainer {
 	
 	/**
 	 * 执行Token的垃圾回收操作
+	 * @param tokenValidTimes token的有效期, 单位是毫秒
 	 */
-	public void execGC() {
+	public void execGC(long tokenValidTimes) {
 		if(user_tokens_container.isEmpty())
 			return;
 		
@@ -133,7 +134,7 @@ public class TokenContainer {
 			List<TokenEntity> list = entry.getValue();
 			
 			for(int i=0; i<list.size(); i++) {
-				if(list.get(i).getLastOpDate().getTime()+properties.getTokenValidTimes() < currentTime) 
+				if(list.get(i).getLastOpDate().getTime()+tokenValidTimes < currentTime) 
 					list.remove(i--);
 			}
 			if(list.isEmpty())
@@ -160,7 +161,7 @@ public class TokenContainer {
 					} catch (InterruptedException e) {
 						logger.error("Token的垃圾回收任务在sleep时出现异常: {}", ExceptionUtil.getStackTrace(e));
 					}
-					execGC();
+					execGC(properties.getTokenValidTimes());
 				}
 			}
 		}.start();

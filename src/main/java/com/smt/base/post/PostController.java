@@ -1,5 +1,7 @@
 package com.smt.base.post;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +34,8 @@ public class PostController {
 	@RequestMapping(value="/insert", method=RequestMethod.POST)
 	public Response insert(@RequestBody Post post) {
 		TokenEntity token = TokenContext.get();
+		if(post.getId()==null)
+			post.setId(UUID.randomUUID().toString());
 		post.setIsDeleted(0);
 		post.setCreateUserId(token.getUserId());
 		post.setCreateDate(token.getCurrentDate());
@@ -63,7 +67,7 @@ public class PostController {
 	 */
 	@LoggingResponse
 	@RequestMapping(value="/delete/{postId}", method=RequestMethod.DELETE)
-	public Response delete(@PathVariable int postId) {
+	public Response delete(@PathVariable String postId) {
 		return service.delete(postId);
 	}
 }

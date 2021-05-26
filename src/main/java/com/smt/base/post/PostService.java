@@ -68,7 +68,7 @@ public class PostService {
 	 * @return
 	 */
 	@Transaction
-	public Response delete(int postId) {
+	public Response delete(String postId) {
 		Post post = SessionContext.getSqlSession().uniqueQuery(Post.class, "select * from base_post where id=?", Arrays.asList(postId));
 		if(post == null || post.getIsDeleted() == 1)
 			throw new SmtBaseException("删除失败, 不存在id为["+postId+"]的岗位");

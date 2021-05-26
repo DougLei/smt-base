@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 查询项目 -->
+	<sql-query name="QueryProjectList">
+		<content>
+			select * from base_project where tenant_id= #{tenantId}
+		</content>
+		
+		<parameters>
+			<parameter name="id" dataType="string" />
+			<parameter name="parent_id" dataType="string" />
+			<parameter name="root_id" dataType="string" />
+			<parameter name="level_" dataType="number" />
+			<parameter name="code" dataType="string" />
+			<parameter name="name" dataType="string" />
+			<parameter name="description" dataType="string" />
+			<parameter name="is_virtual" dataType="number" />
+			<parameter name="state" dataType="number" />
+			<parameter name="create_user_id" dataType="string" />
+			<parameter name="create_date" dataType="datetime" />
+			<parameter name="buffer_id" dataType="string" />
+			<parameter name="auth_code" dataType="string" />
+		</parameters>
+	</sql-query>
+</mapping-configuration>

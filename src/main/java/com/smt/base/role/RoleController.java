@@ -1,5 +1,7 @@
 package com.smt.base.role;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +34,8 @@ public class RoleController {
 	@RequestMapping(value="/insert", method=RequestMethod.POST)
 	public Response insert(@RequestBody Role role) {
 		TokenEntity token = TokenContext.get();
+		if(role.getId()==null)
+			role.setId(UUID.randomUUID().toString());
 		role.setIsDeleted(0);
 		role.setCreateUserId(token.getUserId());
 		role.setCreateDate(token.getCurrentDate());
@@ -63,7 +67,7 @@ public class RoleController {
 	 */
 	@LoggingResponse
 	@RequestMapping(value="/delete/{roleId}", method=RequestMethod.DELETE)
-	public Response delete(@PathVariable int roleId) {
+	public Response delete(@PathVariable String roleId) {
 		return service.delete(roleId);
 	}
 }

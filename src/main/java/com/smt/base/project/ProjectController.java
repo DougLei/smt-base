@@ -8,6 +8,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smt.base.project.entity.ProjectBuilder;
+import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.query.QueryCriteria;
+import com.smt.parent.code.query.QueryCriteriaEntity;
+import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
 
@@ -21,6 +25,9 @@ public class ProjectController {
 	
 	@Autowired
 	private ProjectService service;
+	
+	@Autowired
+	private QueryExecutor queryExecutor;
 	
 	/**
 	 * 插入项目
@@ -52,7 +59,7 @@ public class ProjectController {
 	 */
 	@LoggingResponse
 	@RequestMapping(value="/enable/{projectId}", method=RequestMethod.POST)
-	public Response enable(@PathVariable int projectId) {
+	public Response enable(@PathVariable String projectId) {
 		return service.enable(projectId);
 	}
 	
@@ -63,7 +70,7 @@ public class ProjectController {
 	 */
 	@LoggingResponse
 	@RequestMapping(value="/disable/{projectId}", method=RequestMethod.POST)
-	public Response disable(@PathVariable int projectId) {
+	public Response disable(@PathVariable String projectId) {
 		return service.disable(projectId);
 	}
 
@@ -74,7 +81,18 @@ public class ProjectController {
 	 */
 	@LoggingResponse
 	@RequestMapping(value="/delete/{projectId}", method=RequestMethod.DELETE)
-	public Response delete(@PathVariable int projectId) {
+	public Response delete(@PathVariable String projectId) {
 		return service.delete(projectId);
+	}
+	
+	/**
+	 * 项目查询
+	 * @param entity
+	 * @return
+	 */
+	@LoggingResponse
+	@RequestMapping(value="/query", method=RequestMethod.POST)
+	public Response query(@QueryCriteria QueryCriteriaEntity entity) {
+		return queryExecutor.execute("QueryProjectList", TokenContext.get().getTenantId(), entity);
 	}
 }

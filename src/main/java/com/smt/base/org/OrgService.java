@@ -94,7 +94,7 @@ public class OrgService {
 	 * @return
 	 */
 	@Transaction
-	public Response delete(int orgId) {
+	public Response delete(String orgId) {
 		List<Object> list = Arrays.asList(orgId);
 		Org org = SessionContext.getSqlSession().uniqueQuery(Org.class, "select * from base_org where id=?", list);
 		if(org == null || org.getIsDeleted() == 1)

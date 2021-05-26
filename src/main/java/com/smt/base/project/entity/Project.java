@@ -7,9 +7,9 @@ import java.util.Date;
  * @author DougLei
  */
 public class Project {
-	private int id;
-	private Integer parentId;
-	private Integer rootId;
+	private String id;
+	private String parentId;
+	private String rootId;
 	private int level;
 	private String code;
 	private String name;
@@ -22,16 +22,16 @@ public class Project {
 	private String bufferId;
 	private String authCode;
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-	public Integer getParentId() {
+	public String getParentId() {
 		return parentId;
 	}
-	public void setParentId(Integer parentId) {
+	public void setParentId(String parentId) {
 		this.parentId = parentId;
 	}
 	public String getCode() {
@@ -40,10 +40,10 @@ public class Project {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	public Integer getRootId() {
+	public String getRootId() {
 		return rootId;
 	}
-	public void setRootId(Integer rootId) {
+	public void setRootId(String rootId) {
 		this.rootId = rootId;
 	}
 	public int getLevel() {

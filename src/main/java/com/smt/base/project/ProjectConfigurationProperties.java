@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix="smt.base.project")
 public class ProjectConfigurationProperties {
-	private int maxLevel; // 项目支持的最大层级; 即可嵌套几层; 默认值为2
+	private int maxLevel= 2; // 项目支持的最大层级; 即可嵌套几层; 默认值为2
 
 	public int getMaxLevel() {
 		return maxLevel;

@@ -6,9 +6,10 @@ package com.smt.base.rel;
  */
 public enum Type {
 	USER_ID(50),
-	ORG_CODE(40),
-	POST_CODE(30),
-	ROLE_CODE(20),
+	PROJECT_CODE(40),
+	ORG_CODE(30),
+	POST_CODE(20),
+	ROLE_CODE(10),
 	
 	CUSTOM(0); // 自定义
 	

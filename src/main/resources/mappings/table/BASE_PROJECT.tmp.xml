@@ -2,9 +2,9 @@
 <mapping-configuration>
 	<table name="BASE_PROJECT" class="com.smt.base.project.entity.Project" createMode="create" strict="true">
 		<columns>
-			<column name="ID" property="id" dataType="number" length="10" />
-			<column name="PARENT_ID" property="parentId" dataType="number" length="10" />
-			<column name="ROOT_ID" property="rootId" dataType="number" length="10" />
+			<column name="ID" property="id" dataType="char" length="36" />
+			<column name="PARENT_ID" property="parentId" dataType="char" length="36" />
+			<column name="ROOT_ID" property="rootId" dataType="char" length="36" />
 			<column name="LEVEL_" property="level" dataType="number" length="2" nullable="false"/>
 			<column name="CODE" property="code" dataType="string" length="50" nullable="false"/>
 			<column name="NAME" property="name" dataType="nstring" length="60" nullable="false"/>
@@ -19,7 +19,7 @@
 		</columns>
 		
 		<constraints>
-			<constraint type="PRIMARY_KEY" isAutoIncrement="true">
+			<constraint type="PRIMARY_KEY">
 				<column name="ID" />
 			</constraint>
 		</constraints>

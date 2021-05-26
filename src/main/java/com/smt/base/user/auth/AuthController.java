@@ -175,4 +175,29 @@ public class AuthController {
 			return service.updateToken(result.getEntity(), data);
 		return new Response(data.getValue(), null, result.getMessage(), result.getCode());		
 	}
+	
+	/**
+	 * 查询token
+	 * @return
+	 */
+	@LoggingResponse(loggingBody=false)
+	@RequestMapping(value = "/token/query", method = RequestMethod.GET)
+	public Response queryToken(HttpServletRequest request) {
+		
+		
+		
+		return null;
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @return
+	 */
+	@LoggingResponse
+	@RequestMapping(value = "/token/gc/execute", method = RequestMethod.GET)
+	public Response execTokenGCJob(HttpServletRequest request) {
+		
+		return null;
+	}
 }

@@ -2,15 +2,15 @@
 <mapping-configuration>
 	<sql namespace="Project">
 	
-		<!-- 验证项目code -->
-		<content name="validateCode" type="select">
-			select id from base_project where tenant_id = #{tenantId} and code=#{code} and 
+		<!-- 验证项目code是否存在 -->
+		<content name="validateCodeExists" type="select">
+			select id from base_project where tenant_id= #{tenantId} and code= #{code} and 
 			<switch>
 				<if test="parentId == null">
 					parent_id is null 
 				</if>
 				<else>
-					(root_id=#{rootId, dataType=number, length=10} or id=#{rootId, dataType=number, length=10})
+					root_id=#{rootId}
 				</else>
 			</switch>
 		</content>
@@ -19,7 +19,7 @@
 		<content name="queryChildrenIds" type="select">
 			select id from base_project where 
 			<foreach collection="ids" alias="id" open="parent_id in (" separator="," close=")">
-				#{[0], dataType=number, length=10}
+				#{[0]}
 			</foreach> 
 		</content>
 		
@@ -27,7 +27,7 @@
 		<content name="deleteProject" type="delete">
 			update base_project set state=3 where 
 			<foreach collection="ids" alias="id" open="id in (" separator="," close=")">
-				#{id, dataType=number, length=10}
+				#{id}
 			</foreach> 
 		</content>
 		

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping-configuration>
-	<!-- 查询用户集合 -->
+	<!-- 查询用户 -->
 	<sql-query name="QueryUserList">
 		<content>
 			with

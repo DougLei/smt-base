@@ -81,6 +81,19 @@ POST
 http://192.168.1.111:8502/smt-base/project/delete/{projectId}
 DELETE
 
+--查询
+http://192.168.1.111:8502/smt-base/project/query  
+POST
+-- 查询项目信息的请求体
+{
+	"$mode$":"RECURSIVE_QUERY",
+	"$values$":null,
+	"ID":"RESULT(null)",
+	"PARENT_ID":"RESULT(null)",
+	"CODE":"RESULT(null)",
+	"NAME":"RESULT(null)"
+}
+
 
 
 *********************************************************************************
@@ -122,21 +135,21 @@ POST
 {
 	"userId":"", -- 用户id
 	"loginName":"", -- 账户的登录名, 可不传, 默认为User的name
-	"loginPwd":"" -- 账户的登录密码, 可不传, 默认为666
+	"loginPwd":"" -- 账户的登录密码, 可不传, 默认为111111
 }
 
 --启用账户
 http://192.168.1.111:8502/smt-base/user/account/enable
 POST
 {
-	"id":"" -- 账户id
+	"id":1 -- 账户id
 }
 
 --禁用账户
 http://192.168.1.111:8502/smt-base/user/account/disable
 POST
 {
-	"id":"", -- 账户id
+	"id":1, -- 账户id
 	"disableReason": -- 禁用原因
 }
 
@@ -148,7 +161,7 @@ DELETE
 http://192.168.1.111:8502/smt-base/user/account/name_pwd/update
 POST
 {
-	"id":"", -- 账户id
+	"id":1, -- 账户id
 	"loginName":"", -- 账户的登录名
 	"loginPwd":"" -- 账户的登录密码
 }
@@ -175,7 +188,7 @@ POST
 http://192.168.1.111:8502/smt-base/org/update
 POST
 {
-	"id":1, --主键
+	"id":"", --主键
 	"parentId":1, --父组织机构的id, 可为null
 	"type":1, -- 类型, 1(组织机构/企业), 2(部门)
 	"code":"", -- 编码
@@ -208,7 +221,7 @@ POST
 http://192.168.1.111:8502/smt-base/role/update
 POST
 {
-	"id":1, --主键
+	"id":"", --主键
 	"code":"", -- 编码
 	"name":"", -- 名称
 	"description":"", -- 描述
@@ -239,7 +252,7 @@ POST
 http://192.168.1.111:8502/smt-base/post/update
 POST
 {
-	"id":1, --主键
+	"id":"", --主键
 	"code":"", -- 编码
 	"name":"", -- 名称
 	"description":"", -- 描述
@@ -269,7 +282,7 @@ POST
 http://192.168.1.111:8502/smt-base/dict/update
 POST
 {
-	"id":1, --主键
+	"id":"", --主键
 	"code":"", -- 编码
 	"description":"", -- 描述
 	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围

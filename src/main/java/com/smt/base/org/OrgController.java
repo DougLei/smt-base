@@ -1,5 +1,7 @@
 package com.smt.base.org;
 
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -32,6 +34,8 @@ public class OrgController {
 	@RequestMapping(value="/insert", method=RequestMethod.POST)
 	public Response insert(@RequestBody Org org) {
 		TokenEntity token = TokenContext.get();
+		if(org.getId()==null)
+			org.setId(UUID.randomUUID().toString());
 		org.setIsDeleted(0);
 		org.setCreateUserId(token.getUserId());
 		org.setCreateDate(token.getCurrentDate());
@@ -63,7 +67,7 @@ public class OrgController {
 	 */
 	@LoggingResponse
 	@RequestMapping(value="/delete/{orgId}", method=RequestMethod.DELETE)
-	public Response delete(@PathVariable int orgId) {
+	public Response delete(@PathVariable String orgId) {
 		return service.delete(orgId);
 	}
 }

@@ -1,5 +1,7 @@
 package com.smt.base.project.entity;
 
+import java.util.UUID;
+
 import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.filters.token.TokenEntity;
 
@@ -8,8 +10,8 @@ import com.smt.parent.code.filters.token.TokenEntity;
  * @author DougLei
  */
 public class ProjectBuilder {
-	private int id;
-	private Integer parentId;
+	private String id;
+	private String parentId;
 	private String code;
 	private String name;
 	private Integer isVirtual; // 是否虚拟项目, 1是0否
@@ -18,6 +20,7 @@ public class ProjectBuilder {
 	// 构建Project实例, 设置基础数据
 	private Project build() {
 		Project project = new Project();
+		project.setId(id==null?UUID.randomUUID().toString():id);
 		project.setParentId(parentId);
 		project.setCode(code);
 		project.setName(name);
@@ -48,7 +51,6 @@ public class ProjectBuilder {
 	 */
 	public Project build4Update(Project old) {
 		Project project = build();
-		project.setId(id);
 		
 		project.setRootId(old.getRootId());
 		project.setStateInstance(old.getStateInstance());
@@ -56,16 +58,16 @@ public class ProjectBuilder {
 		return project;
 	}
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-	public Integer getParentId() {
+	public String getParentId() {
 		return parentId;
 	}
-	public void setParentId(Integer parentId) {
+	public void setParentId(String parentId) {
 		this.parentId = parentId;
 	}
 	public String getCode() {

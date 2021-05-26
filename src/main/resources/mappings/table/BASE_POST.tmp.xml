@@ -2,7 +2,7 @@
 <mapping-configuration>
 	<table name="BASE_POST" class="com.smt.base.post.Post" createMode="create" strict="true">
 		<columns>
-			<column name="ID" property="id" dataType="number" length="10" />
+			<column name="ID" property="id" dataType="char" length="36" />
 			<column name="CODE" property="code" dataType="string" length="50" nullable="false"/>
 			<column name="NAME" property="name" dataType="nstring" length="50" nullable="false"/>
 			<column name="DESCRIPTION" property="description" dataType="nstring" length="50"/>
@@ -14,7 +14,7 @@
 		</columns>
 		
 		<constraints>
-			<constraint type="PRIMARY_KEY" isAutoIncrement="true">
+			<constraint type="PRIMARY_KEY">
 				<column name="ID" />
 			</constraint>
 		</constraints>

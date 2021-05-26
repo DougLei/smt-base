@@ -7,8 +7,8 @@ import java.util.Date;
  * @author DougLei
  */
 public class Org {
-	private int id;
-	private Integer parentId;
+	private String id;
+	private String parentId;
 	private Integer type; // 类型: 1(组织机构/企业), 2(部门)
 	private String code;
 	private String name;
@@ -19,16 +19,16 @@ public class Org {
 	private String projectCode;
 	private String tenantId;
 	
-	public int getId() {
+	public String getId() {
 		return id;
 	}
-	public void setId(int id) {
+	public void setId(String id) {
 		this.id = id;
 	}
-	public Integer getParentId() {
+	public String getParentId() {
 		return parentId;
 	}
-	public void setParentId(Integer parentId) {
+	public void setParentId(String parentId) {
 		this.parentId = parentId;
 	}
 	public Integer getType() {

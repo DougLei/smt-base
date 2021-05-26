@@ -68,7 +68,7 @@ public class RoleService {
 	 * @return
 	 */
 	@Transaction
-	public Response delete(int roleId) {
+	public Response delete(String roleId) {
 		Role role = SessionContext.getSqlSession().uniqueQuery(Role.class, "select * from base_role where id=?", Arrays.asList(roleId));
 		if(role == null || role.getIsDeleted() == 1)
 			throw new SmtBaseException("删除失败, 不存在id为["+roleId+"]的角色");

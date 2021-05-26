@@ -2,6 +2,7 @@ package com.smt.base.dict;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,6 +37,8 @@ public class DictController {
 	@RequestMapping(value="/insert", method=RequestMethod.POST)
 	public Response insert(Dict dict) {
 		TokenEntity token = TokenContext.get();
+		if(dict.getId()==null)
+			dict.setId(UUID.randomUUID().toString());
 		dict.setCreateUserId(token.getUserId());
 		dict.setCreateDate(token.getCurrentDate());
 		dict.setTenantId(token.getTenantId());
@@ -65,7 +68,7 @@ public class DictController {
 	 */
 	@LoggingResponse
 	@RequestMapping(value="/delete/{dictId}", method=RequestMethod.DELETE)
-	public Response delete(@PathVariable int dictId) {
+	public Response delete(@PathVariable String dictId) {
 		return service.delete(dictId);
 	}
 	
@@ -100,9 +103,9 @@ public class DictController {
 	@LoggingResponse
 	@RequestMapping(value="/detail/delete/{detailIds}", method=RequestMethod.DELETE)
 	public Response deleteDetail(@PathVariable String detailIds) {
-		List<Integer> ids = new ArrayList<Integer>();
+		List<String> ids = new ArrayList<String>();
 		for(String detailId: detailIds.split(","))
-			ids.add(Integer.parseInt(detailId));
+			ids.add(detailId);
 		
 		service.deleteDetail(ids);
 		return new Response(detailIds);
