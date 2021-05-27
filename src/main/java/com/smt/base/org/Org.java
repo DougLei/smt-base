@@ -16,7 +16,6 @@ public class Org {
 	private int isDeleted;
 	private String createUserId;
 	private Date createDate;
-	private String projectCode;
 	private String tenantId;
 	
 	public String getId() {
@@ -72,12 +71,6 @@ public class Org {
 	}
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
-	}
-	public String getProjectCode() {
-		return projectCode;
-	}
-	public void setProjectCode(String projectCode) {
-		this.projectCode = projectCode;
 	}
 	public String getTenantId() {
 		return tenantId;

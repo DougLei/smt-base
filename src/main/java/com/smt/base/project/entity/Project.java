@@ -14,6 +14,7 @@ public class Project {
 	private String code;
 	private String name;
 	private Integer isVirtual; // 是否是虚拟项目, 1是0否
+	private int isDefault; // 是否是默认项目, 1是0否
 	private State state;
 	private String description;
 	private String createUserId;
@@ -63,6 +64,12 @@ public class Project {
 	}
 	public void setIsVirtual(Integer isVirtual) {
 		this.isVirtual = isVirtual;
+	}
+	public int getIsDefault() {
+		return isDefault;
+	}
+	public void setIsDefault(int isDefault) {
+		this.isDefault = isDefault;
 	}
 	public State getStateInstance() {
 		return state;

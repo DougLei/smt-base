@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 查询岗位  -->
+	<sql-query name="QueryPostList">
+		<content>
+			select * from base_post where project_code= #{token.projectCode} and tenant_id= #{token.tenantId}
+			<if test="!queryDeleted">
+				and is_deleted=0
+			</if>
+			
+			<if test="token.parentProjectCodes != null">
+				union
+				select * from base_post where tenant_id= #{tenantId} and 
+				<foreach collection="token.parentProjectCodes" alias="code" open="project_code in (" separator="," close=")">
+					#{code}
+				</foreach> 
+				<if test="!queryDeleted">
+					and is_deleted=0
+				</if>
+			</if>
+		</content>
+		
+		<parameters>
+			<parameter name="id" dataType="string" />
+			<parameter name="code" dataType="string" />
+			<parameter name="name" dataType="string" />
+			<parameter name="description" dataType="string" />
+			<parameter name="is_deleted" dataType="number" />
+			<parameter name="create_user_id" dataType="string" />
+			<parameter name="create_date" dataType="datetime" />
+		</parameters>
+	</sql-query>
+</mapping-configuration>

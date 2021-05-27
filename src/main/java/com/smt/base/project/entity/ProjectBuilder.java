@@ -52,7 +52,6 @@ public class ProjectBuilder {
 	public Project build4Update(Project old) {
 		Project project = build();
 		
-		project.setRootId(old.getRootId());
 		project.setStateInstance(old.getStateInstance());
 		project.setTenantId(TokenContext.get().getTenantId());
 		return project;

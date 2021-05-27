@@ -31,6 +31,18 @@ public class DictService {
 				Arrays.asList(detail.getDictId(), detail.getKey())) != null;
 	}
 	
+	/**
+	 * 数据字典明细查询
+	 * @param dictId
+	 * @return
+	 */
+	public Response queryDetail(String dictId) {
+		List<Object> list = Arrays.asList(dictId);
+		if(SessionContext.getSqlSession().uniqueQuery_("select id from base_dict where id=?", list) == null)
+			throw new SmtBaseException("查询明细失败, 不存在id为["+dictId+"]的数据字典");
+		return new Response(SessionContext.getSqlSession().query("select * from base_dict_detail where dict_id=?", list));
+	}
+	
 	
 	/**
 	 * 添加数据字典
@@ -124,7 +136,7 @@ public class DictService {
 	 * @param detailIds
 	 */
 	@Transaction
-	public void deleteDetail(List<String> detailIds) {
+	public void deleteDetail(List<Integer> detailIds) {
 		SessionContext.getSQLSession().executeUpdate("Dict", "deleteDetail", detailIds);
 	}
 }

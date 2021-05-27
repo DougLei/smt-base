@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 查询用户 -->
+	<sql-query name="QueryUserList4JBPM">
+		<content>
+			with
+				/* 用户关联的部门数据 */
+				user_org_temp_tb as (
+					select rel.left_value user_id, org.code org_id, org.name org_name from base_org org
+						left join base_data_rel rel on (rel.right_value = org.code)
+							where rel.tenant_id= #{tenantId} and rel.left_type='USER_ID' and rel.right_type='ORG_CODE' and org.is_deleted=0
+				),
+				user_org_tb as (
+					select distinct
+						uott.user_id, 
+						stuff((select ','+org_id from user_org_temp_tb where user_id=uott.user_id for xml path('')),1,1,'') org_id,
+						stuff((select ','+org_name from user_org_temp_tb where user_id=uott.user_id for xml path('')),1,1,'') org_name
+							from user_org_temp_tb uott
+							
+				),
+				/* 用户关联的岗位数据 */
+				user_post_temp_tb as (
+					select rel.left_value user_id, post.code post_id, post.name post_name from base_post post
+						left join base_data_rel rel on (rel.right_value = post.code)
+							where rel.tenant_id= #{tenantId} and rel.left_type='USER_ID' and rel.right_type='POST_CODE' and post.is_deleted=0
+				),
+				user_post_tb as (
+					select distinct
+						uptt.user_id, 
+						stuff((select ','+post_id from user_post_temp_tb where user_id=uptt.user_id for xml path('')),1,1,'') post_id,
+						stuff((select ','+post_name from user_post_temp_tb where user_id=uptt.user_id for xml path('')),1,1,'') post_name
+							from user_post_temp_tb uptt
+				),
+				/* 用户关联的角色数据 */
+				user_role_temp_tb as (
+					select rel.left_value user_id, role.code role_id, role.name role_name from base_role role
+						left join base_data_rel rel on (rel.right_value = role.code)
+							where rel.tenant_id= #{tenantId} and rel.left_type='USER_ID' and rel.right_type='ROLE_CODE' and role.is_deleted=0
+				),
+				user_role_tb as (
+					select distinct
+						urtt.user_id, 
+						stuff((select ','+role_id from user_role_temp_tb where user_id=urtt.user_id for xml path('')),1,1,'') role_id,
+						stuff((select ','+role_name from user_role_temp_tb where user_id=urtt.user_id for xml path('')),1,1,'') role_name
+							from user_role_temp_tb urtt
+							
+				)
+			select id, isnull(real_name, name) name, uo.org_id, uo.org_name, up.post_id, up.post_name, ur.role_id, ur.role_name from base_user user_
+				left join user_org_tb uo on (user_.id = uo.user_id)
+				left join user_post_tb up on (user_.id = up.user_id)
+				left join user_role_tb ur on (user_.id = ur.user_id)
+					where is_deleted=0 and tenant_id= #{tenantId}
+		</content>
+		
+		<parameters>
+			<parameter name="id" dataType="string" />
+			<parameter name="name" dataType="string" />
+			<parameter name="org_id" dataType="string" />	
+			<parameter name="org_name" dataType="string" />
+			<parameter name="post_id" dataType="string" />	
+			<parameter name="post_name" dataType="string" />
+			<parameter name="role_id" dataType="string" />	
+			<parameter name="role_name" dataType="string" />
+		</parameters>
+	</sql-query>
+</mapping-configuration>

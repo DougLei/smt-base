@@ -69,13 +69,12 @@ public class AuthController {
 	public Response clogin(@RequestBody LoginEntity entity, HttpServletRequest request) {
 		loginPreprocessing(entity, request);
 		
-		if(properties.getCloginAccounts() == null)
-			return new Response(entity, null, "无权登录配置系统, 请联系管理员", "smt.base.clogin.fail.no.right");
-		
-		for(CLoginAccount account: properties.getCloginAccounts()) {
-			if(account.getLoginName().equals(entity.getLoginName()) && account.getTenantId().equals(entity.getTenantId())) {
-				entity.setProjectCode(null); // 置空项目code
-				return login_(entity, request);
+		if(properties.getCloginAccounts() != null) {
+			for(CLoginAccount account: properties.getCloginAccounts()) {
+				if(account.getLoginName().equals(entity.getLoginName()) && account.getTenantId().equals(entity.getTenantId())) {
+					entity.setProjectCode(null); // 置空项目code
+					return login_(entity, request);
+				}
 			}
 		}
 		return new Response(entity, null, "无权登录配置系统, 请联系管理员", "smt.base.clogin.fail.no.right");
@@ -183,20 +182,34 @@ public class AuthController {
 	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value = "/token/query", method = RequestMethod.GET)
 	public Response queryToken(HttpServletRequest request) {
-		
+		// TODO
 		
 		
 		return null;
 	}
 	
 	/**
-	 * 
+	 * 下线
+	 * @return
+	 */
+	@LoggingResponse
+	@RequestMapping(value = "/token/offline", method = RequestMethod.GET)
+	public Response offline() {
+		// TODO
+		
+		return null;
+	}
+	
+	/**
+	 * (手动)执行token的垃圾回收
 	 * @param request
 	 * @return
 	 */
 	@LoggingResponse
 	@RequestMapping(value = "/token/gc/execute", method = RequestMethod.GET)
 	public Response execTokenGCJob(HttpServletRequest request) {
+		// TODO
+		
 		
 		return null;
 	}

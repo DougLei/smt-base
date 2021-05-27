@@ -1,23 +1,22 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping-configuration>
-	<!-- 查询项目 -->
-	<sql-query name="QueryProjectList">
+	<!-- 查询组织机构 -->
+	<sql-query name="QueryOrgList">
 		<content>
-			select * from base_project where tenant_id= #{tenantId} 
+			select * from base_org where tenant_id= #{tenantId} 
 			<if test="!queryDeleted">
-				and state !=3
+				and is_deleted= 0
 			</if>
 		</content>
 		
 		<parameters>
 			<parameter name="id" dataType="string" />
 			<parameter name="parent_id" dataType="string" />
+			<parameter name="type" dataType="number" />
 			<parameter name="code" dataType="string" />
 			<parameter name="name" dataType="string" />
 			<parameter name="description" dataType="string" />
-			<parameter name="is_virtual" dataType="number" />
-			<parameter name="is_default" dataType="number" />
-			<parameter name="state" dataType="number" />
+			<parameter name="is_deleted" dataType="number" />
 			<parameter name="create_user_id" dataType="string" />
 			<parameter name="create_date" dataType="datetime" />
 		</parameters>

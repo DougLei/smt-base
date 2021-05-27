@@ -6,12 +6,15 @@ import java.util.Date;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.DigestUtils;
 
+import com.douglei.orm.context.PropagationBehavior;
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.douglei.tools.StringUtil;
 import com.smt.base.SmtBaseException;
+import com.smt.base.project.ProjectService;
 import com.smt.base.rel.DataRelService;
+import com.smt.base.rel.DataRelWrapper;
 import com.smt.base.rel.Type;
 import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.response.Response;
@@ -25,6 +28,9 @@ public class UserService {
 	
 	@Autowired
 	private DataRelService dataRelService;
+	
+	@Autowired
+	private ProjectService projectService;
 	
 	// 验证name是否存在
 	private boolean nameExists(User user) {
@@ -56,8 +62,20 @@ public class UserService {
 			Account account = user.getAccount();
 			if(loginNameExists(account))
 				return new Response(builder, "loginName", "登录名[%s]已被使用", "smt.base.user.fail.loginname.exists", account.getLoginName());
-			
 			SessionContext.getTableSession().save(account);
+		}
+		
+		// 给用户设置(默认)可登录的系统
+		if(builder.getProjectCode() != null) {
+			if(!projectService.codeExists(builder.getProjectCode(), user.getTenantId()))
+				throw new SmtBaseException("添加用户失败, 不存在编码为["+builder.getProjectCode()+"]的项目");
+			
+			DataRelWrapper wrapper = new DataRelWrapper(user.getTenantId());
+			wrapper.setParentTypeInstance(Type.USER_ID);
+			wrapper.setParentValue(user.getId());
+			wrapper.setChildTypeInstance(Type.PROJECT_CODE);
+//			wrapper.setChildValues(builder.getProjectCode());????
+			dataRelService.operate(wrapper);
 		}
 		
 		SessionContext.getTableSession().save(user);
@@ -101,11 +119,25 @@ public class UserService {
 		
 		// 用户信息置于删除状态
 		SessionContext.getSqlSession().executeUpdate("update base_user set is_deleted=1 where id=?", Arrays.asList(userId));
+		
+		// 删除和当前用户相关的所有关联数据
 		dataRelService.deleteAll(Type.USER_ID, userId);
 		return new Response(userId);
 	}
 	
 	// ------------------------------------------------------------------------------------------------------
+	/**
+	 * 查询账户
+	 * @param builder
+	 * @return
+	 */
+	@Transaction(propagationBehavior=PropagationBehavior.SUPPORTS)
+	public Response queryAccount(AccountBuilder builder) {
+		if(builder.getId() != 0)
+			return new Response(builder.getById());
+		return new Response(builder.getByUserId());
+	}
+	
 	/**
 	 * 开通账户
 	 * @param builder
@@ -139,10 +171,8 @@ public class UserService {
 		Account account = builder.getById();
 		if(account == null)
 			throw new SmtBaseException("启用账户失败, 不存在id为["+builder.getId()+"]的账户");
-		if(account.getIsDisabled() == 0)
-			return new Response(builder.getId(), null, "启用账户失败, 账户处于激活状态", "smt.base.user.fail.account.isenabled");
-		
-		SessionContext.getSqlSession().executeUpdate("update base_account set is_disabled=0, disable_user_id=null, disable_date=null, disable_reason=null where id=?", Arrays.asList(builder.getId()));
+		if(account.getIsDisabled() == 1)
+			SessionContext.getSqlSession().executeUpdate("update base_account set is_disabled=0, disable_user_id=null, disable_date=null, disable_reason=null where id=?", Arrays.asList(builder.getId()));
 		return new Response(builder.getId());
 	}
 	
@@ -156,10 +186,8 @@ public class UserService {
 		Account account = builder.getById();
 		if(account == null)
 			throw new SmtBaseException("禁用账户失败, 不存在id为["+builder.getId()+"]的账户");
-		if(account.getIsDisabled() == 1)
-			return new Response(builder.getId(), null, "禁用账户失败, 账户处于禁用状态", "smt.base.user.fail.account.isdisabled");
-		
-		disableAccount_(builder.getId(), TokenContext.get().getUserId(), new Date(), builder.getDisableReason());
+		if(account.getIsDisabled() == 0)
+			disableAccount_(builder.getId(), TokenContext.get().getUserId(), new Date(), builder.getDisableReason());
 		return new Response(builder.getId());
 	}
 	
@@ -195,7 +223,7 @@ public class UserService {
 	 */
 	@Transaction
 	public Response updateLoginNameAndLoginPwd(AccountBuilder builder) {
-		Account account = builder.getById();
+		Account account = builder.getId()!=0?builder.getById():builder.getByUserId();
 		if(account == null)
 			throw new SmtBaseException("修改账户的登录名和登录密码失败, 不存在id为["+builder.getId()+"]的账户");
 		

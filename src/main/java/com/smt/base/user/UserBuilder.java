@@ -12,6 +12,7 @@ import com.smt.parent.code.filters.token.TokenEntity;
 public class UserBuilder {
 	// 用户信息
 	private String id;
+	private int type;
 	private String name;
 	private String realName;
 	private Integer sex;
@@ -20,11 +21,14 @@ public class UserBuilder {
 	// 账户信息
 	private String loginName;
 	private String loginPwd;
+	// 关联的项目信息
+	private String projectCode;
 	
 	// 构建User实例, 设置基础数据
 	private User build() {
 		User user = new User();
 		user.setId(id==null?UUID.randomUUID().toString():id);
+		user.setType(type);
 		user.setName(name);
 		user.setRealName(realName);
 		user.setSex(sex);
@@ -67,6 +71,12 @@ public class UserBuilder {
 	public void setId(String id) {
 		this.id = id;
 	}
+	public int getType() {
+		return type;
+	}
+	public void setType(int type) {
+		this.type = type;
+	}
 	public String getName() {
 		return name;
 	}
@@ -108,5 +118,11 @@ public class UserBuilder {
 	}
 	public void setLoginPwd(String loginPwd) {
 		this.loginPwd = loginPwd;
+	}
+	public String getProjectCode() {
+		return projectCode;
+	}
+	public void setProjectCode(String projectCode) {
+		this.projectCode = projectCode;
 	}
 }

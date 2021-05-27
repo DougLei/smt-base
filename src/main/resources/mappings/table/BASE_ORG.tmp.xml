@@ -11,7 +11,6 @@
 			<column name="IS_DELETED" property="isDeleted" dataType="number" length="1" nullable="false"/>
 			<column name="CREATE_USER_ID" property="createUserId" dataType="char" length="36" nullable="false"/>
 			<column name="CREATE_DATE" property="createDate" dataType="datetime" nullable="false"/>
-			<column name="PROJECT_CODE" property="projectCode" dataType="string" length="50" />
 			<column name="TENANT_ID" property="tenantId" dataType="char" length="36" nullable="false"/>
 		</columns>
 		

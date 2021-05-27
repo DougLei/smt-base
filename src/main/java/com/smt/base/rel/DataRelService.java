@@ -2,7 +2,6 @@ package com.smt.base.rel;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import com.douglei.orm.context.PropagationBehavior;
@@ -47,13 +46,13 @@ public class DataRelService {
 	/**
 	 * 查询Value集合
 	 * @param wrapper
-	 * @return
+	 * @return 没查到数据时会返回null
 	 */
 	@Transaction(propagationBehavior=PropagationBehavior.SUPPORTS)
 	public List<String> queryValues(DataRelWrapper wrapper) {
 		List<Object[]> results = SessionContext.getSQLSession().query_("DataRel", "queryValues", wrapper);
 		if(results.isEmpty())
-			return Collections.emptyList();
+			return null;
 		
 		List<String> values = new ArrayList<String>(results.size());
 		results.forEach(result -> values.add(result[0].toString()));

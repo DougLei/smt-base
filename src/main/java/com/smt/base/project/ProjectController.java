@@ -1,5 +1,10 @@
 package com.smt.base.project;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -9,8 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.smt.base.project.entity.ProjectBuilder;
 import com.smt.parent.code.filters.token.TokenContext;
-import com.smt.parent.code.query.QueryCriteria;
-import com.smt.parent.code.query.QueryCriteriaEntity;
 import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
@@ -28,6 +31,21 @@ public class ProjectController {
 	
 	@Autowired
 	private QueryExecutor queryExecutor;
+	
+	/**
+	 * 项目查询
+	 * @param request
+	 * @return
+	 */
+	@LoggingResponse(loggingBody=false)
+	@RequestMapping(value="/query", method=RequestMethod.GET)
+	public Response query(HttpServletRequest request) {
+		Map<String, Object> params = new HashMap<String, Object>(4);
+		params.put("queryDeleted", "true".equalsIgnoreCase(request.getParameter("queryDeleted")));
+		params.put("tenantId", TokenContext.get().getTenantId());
+		
+		return queryExecutor.execute("QueryProjectList", params, request);
+	}
 	
 	/**
 	 * 插入项目
@@ -86,13 +104,24 @@ public class ProjectController {
 	}
 	
 	/**
-	 * 项目查询
-	 * @param entity
+	 * 设置默认项目
+	 * @param projectId
 	 * @return
 	 */
 	@LoggingResponse
-	@RequestMapping(value="/query", method=RequestMethod.POST)
-	public Response query(@QueryCriteria QueryCriteriaEntity entity) {
-		return queryExecutor.execute("QueryProjectList", TokenContext.get().getTenantId(), entity);
+	@RequestMapping(value="/set/default/{projectId}", method=RequestMethod.POST)
+	public Response setDefault(@PathVariable String projectId) {
+		return service.setDefault(projectId);
+	}
+	
+	/**
+	 * 取消默认项目
+	 * @param projectId
+	 * @return
+	 */
+	@LoggingResponse
+	@RequestMapping(value="/set/undefault/{projectId}", method=RequestMethod.POST)
+	public Response setUnDefault(@PathVariable String projectId) {
+		return service.setUnDefault(projectId);
 	}
 }

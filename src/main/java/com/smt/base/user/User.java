@@ -20,6 +20,11 @@ public class User {
 	private String tenantId;
 	private Account account;
 	
+	public String getUserName() {
+		if(realName != null)
+			return realName;
+		return name;
+	}
 	public String getId() {
 		return id;
 	}

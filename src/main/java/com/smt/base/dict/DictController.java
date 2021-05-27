@@ -1,11 +1,14 @@
 package com.smt.base.dict;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,6 +17,7 @@ import com.smt.base.dict.entity.Dict;
 import com.smt.base.dict.entity.DictDetail;
 import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.filters.token.TokenEntity;
+import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
 
@@ -27,7 +31,37 @@ public class DictController {
 	
 	@Autowired
 	private DictService service;
+
+	@Autowired
+	private QueryExecutor queryExecutor;
 	
+	/**
+	 * 数据字典查询
+	 * @param request
+	 * @return
+	 */
+	@LoggingResponse(loggingBody=false)
+	@RequestMapping(value="/query", method=RequestMethod.GET)
+	public Response query(HttpServletRequest request) {
+		Map<String, Object> params = new HashMap<String, Object>(4);
+		params.put("queryDeleted", "true".equalsIgnoreCase(request.getParameter("queryDeleted")));
+		params.put("token", TokenContext.get().getTenantId());
+		
+		return queryExecutor.execute("QueryDictList", TokenContext.get(), request);
+	}
+	
+	/**
+	 * 数据字典明细查询
+	 * @param request
+	 * @return
+	 */
+	@LoggingResponse(loggingBody=false)
+	@RequestMapping(value="/detail/query", method=RequestMethod.GET)
+	public Response queryDetail(HttpServletRequest request) {
+		return service.queryDetail(request.getParameter("_id"));
+	}
+	
+	// ------------------------------------------------------------------------------------------------------
 	/**
 	 * 添加数据字典
 	 * @param dict
@@ -63,13 +97,13 @@ public class DictController {
 	
 	/**
 	 * 删除数据字典, 同时会删除明细集合
-	 * @param dictId
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse
-	@RequestMapping(value="/delete/{dictId}", method=RequestMethod.DELETE)
-	public Response delete(@PathVariable String dictId) {
-		return service.delete(dictId);
+	@RequestMapping(value="/delete", method=RequestMethod.DELETE)
+	public Response delete(HttpServletRequest request) {
+		return service.delete(request.getParameter("_id"));
 	}
 	
 	// ------------------------------------------------------------------------------------------------------
@@ -97,17 +131,17 @@ public class DictController {
 	
 	/**
 	 * 删除数据字典明细
-	 * @param detailIds
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse
-	@RequestMapping(value="/detail/delete/{detailIds}", method=RequestMethod.DELETE)
-	public Response deleteDetail(@PathVariable String detailIds) {
-		List<String> ids = new ArrayList<String>();
-		for(String detailId: detailIds.split(","))
-			ids.add(detailId);
+	@RequestMapping(value="/detail/delete", method=RequestMethod.DELETE)
+	public Response deleteDetail(HttpServletRequest request) {
+		List<Integer> ids = new ArrayList<Integer>();
+		for(String detailId: request.getParameter("_ids").split(","))
+			ids.add(Integer.parseInt(detailId));
 		
 		service.deleteDetail(ids);
-		return new Response(detailIds);
+		return new Response(null);
 	}
 }

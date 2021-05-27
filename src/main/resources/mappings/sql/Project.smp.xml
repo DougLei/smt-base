@@ -1,18 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping-configuration>
 	<sql namespace="Project">
-	
-		<!-- 验证项目code是否存在 -->
-		<content name="validateCodeExists" type="select">
-			select id from base_project where tenant_id= #{tenantId} and code= #{code} and 
-			<switch>
-				<if test="parentId == null">
-					parent_id is null 
-				</if>
-				<else>
-					root_id=#{rootId}
-				</else>
-			</switch>
+		
+		<!-- 查询父项目code -->
+		<content name="queryParentCode" type="select">
+			select parent_id, code from base_project where id= #{id}
 		</content>
 		
 		<!-- 查询子项目id -->

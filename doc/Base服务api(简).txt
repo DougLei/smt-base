@@ -46,10 +46,16 @@ POST
 项目管理
 *********************************************************************************
 
+--查询
+http://192.168.1.111:8502/smt-base/project/query  
+GET
+可用的列(不区分大小写): id, parent_id, code, name, description, is_virtual, is_default, state, create_user_id, create_date
+
 --添加
 http://192.168.1.111:8502/smt-base/project/insert
 POST
 {
+	"id":"", -- 主键
 	"parentId": 0, --父项目id, 可为null(根项目), 数字类型 
 	"code":"",
 	"name":"",
@@ -61,7 +67,7 @@ POST
 http://192.168.1.111:8502/smt-base/project/update
 POST
 {
-	"id":1, -- 主键
+	"id":"", -- 主键
 	"parentId": 0, --父项目id, 可为null(根项目), 数字类型 
 	"code":"",
 	"name":"",
@@ -81,18 +87,13 @@ POST
 http://192.168.1.111:8502/smt-base/project/delete/{projectId}
 DELETE
 
---查询
-http://192.168.1.111:8502/smt-base/project/query  
+--设置默认项目
+http://192.168.1.111:8502/smt-base/project/set/default/{projectId}
 POST
--- 查询项目信息的请求体
-{
-	"$mode$":"RECURSIVE_QUERY",
-	"$values$":null,
-	"ID":"RESULT(null)",
-	"PARENT_ID":"RESULT(null)",
-	"CODE":"RESULT(null)",
-	"NAME":"RESULT(null)"
-}
+
+--取消默认项目
+http://192.168.1.111:8502/smt-base/project/set/undefault/{projectId}
+POST
 
 
 
@@ -100,17 +101,33 @@ POST
 用户管理
 *********************************************************************************
 
+--查询
+http://192.168.1.111:8502/smt-base/user/query
+GET
+可用的列(不区分大小写): id, type, name, real_name, sex, phone_num, email, is_deleted, create_user_id, create_date
+
+--查询账户
+http://192.168.1.111:8502/smt-base/user/account/query
+POST
+{
+	"id":1, -- 主键
+	"userId":"" -- 用户id; id和userId参数二选一传入即可, id的优先级高于userId
+}
+
 --添加
 http://192.168.1.111:8502/smt-base/user/insert
 POST
 {
+	"id":"", -- 主键
+	"type":0, -- 类别, 可自定义
 	"name":"", --名称, 租户下唯一
 	"realName":"", --真实姓名
 	"sex":1/2, -- 性别, 1男, 2女
 	"phoneNum":"", -- 手机号码
 	"email":"", -- 邮箱
 	"loginName":"", -- 开通的账户的登录名, 可不传, 默认为name
-	"loginPwd":"" -- 开通的账户的登录密码, 可不传, 默认为111111
+	"loginPwd":"", -- 开通的账户的登录密码, 可不传, 默认为111111
+	"projectCode":"" --用户(默认)拥有登录权限的项目code, 如果传入null, 则无法登录任何系统, 需要单独授权
 }
 
 --修改
@@ -118,6 +135,7 @@ http://192.168.1.111:8502/smt-base/user/update
 POST
 {
 	"id":"", --主键
+	"type":0, -- 类别, 可自定义
 	"name":"", --名称, 租户下唯一
 	"realName":"", --真实姓名
 	"sex":1/2, -- 性别, 1男, 2女
@@ -126,7 +144,7 @@ POST
 }
 
 --删除
-http://192.168.1.111:8502/smt-base/user/delete/{userId}
+http://192.168.1.111:8502/smt-base/user/delete?_id=userId
 DELETE
 
 --开通账户
@@ -162,6 +180,7 @@ http://192.168.1.111:8502/smt-base/user/account/name_pwd/update
 POST
 {
 	"id":1, -- 账户id
+	"userId":"", -- 用户id; id和userId参数二选一传入即可, id的优先级高于userId
 	"loginName":"", -- 账户的登录名
 	"loginPwd":"" -- 账户的登录密码
 }
@@ -172,6 +191,11 @@ POST
 组织机构管理
 *********************************************************************************
 
+--查询
+http://192.168.1.111:8502/smt-base/user/query
+GET
+可用的列(不区分大小写): id, parent_id, type, code, name, description, is_deleted, create_user_id, create_date
+
 --添加
 http://192.168.1.111:8502/smt-base/org/insert
 POST
@@ -180,8 +204,7 @@ POST
 	"type":1, -- 类型, 1(组织机构/企业), 2(部门)
 	"code":"", -- 编码
 	"name":"", -- 名称
-	"description":"", -- 描述
-	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
+	"description":"" -- 描述
 }
 
 --修改
@@ -193,12 +216,11 @@ POST
 	"type":1, -- 类型, 1(组织机构/企业), 2(部门)
 	"code":"", -- 编码
 	"name":"", -- 名称
-	"description":"", -- 描述
-	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
+	"description":"" -- 描述
 }
 
 --删除
-http://192.168.1.111:8502/smt-base/org/delete/{orgId}
+http://192.168.1.111:8502/smt-base/org/delete?_id=orgId
 DELETE
 
 
@@ -206,6 +228,11 @@ DELETE
 *********************************************************************************
 角色管理
 *********************************************************************************
+
+--查询
+http://192.168.1.111:8502/smt-base/role/query
+GET
+可用的列(不区分大小写): id, code, name, description, is_deleted, create_user_id, create_date
 
 --添加
 http://192.168.1.111:8502/smt-base/role/insert
@@ -229,7 +256,7 @@ POST
 }
 
 --删除
-http://192.168.1.111:8502/smt-base/role/delete/{roleId}
+http://192.168.1.111:8502/smt-base/role/delete?_id=roleId
 DELETE
 
 
@@ -237,6 +264,11 @@ DELETE
 *********************************************************************************
 岗位管理
 *********************************************************************************
+
+--查询
+http://192.168.1.111:8502/smt-base/post/query
+GET
+可用的列(不区分大小写): id, code, name, description, is_deleted, create_user_id, create_date
 
 --添加
 http://192.168.1.111:8502/smt-base/post/insert
@@ -269,6 +301,16 @@ DELETE
 数据字典管理
 *********************************************************************************
 
+--查询
+http://192.168.1.111:8502/smt-base/dict/query
+GET
+可用的列(不区分大小写): id, code, name, description, is_deleted, create_user_id, create_date
+
+--查询明细
+http://192.168.1.111:8502/smt-base/dict/detail/query?_id=dictId
+GET
+
+
 --添加
 http://192.168.1.111:8502/smt-base/dict/insert
 POST
@@ -289,7 +331,7 @@ POST
 }
 
 --删除
-http://192.168.1.111:8502/smt-base/dict/delete/{dictId}
+http://192.168.1.111:8502/smt-base/dict/delete?_id=dictId
 DELETE
 
 
@@ -315,7 +357,7 @@ POST
 }
 
 --删除明细
-http://192.168.1.111:8502/smt-base/dict/detail/delete/{detailIds} -- 多个用,分割
+http://192.168.1.111:8502/smt-base/dict/detail/delete?_ids=detailIds -- 多个用,分割
 DELETE
 
 

@@ -10,6 +10,7 @@
 			<column name="NAME" property="name" dataType="nstring" length="60" nullable="false"/>
 			<column name="DESCRIPTION" property="description" dataType="nstring" length="100"/>
 			<column name="IS_VIRTUAL" property="isVirtual" dataType="number" length="1" nullable="false"/>
+			<column name="IS_DEFAULT" property="isDefault" dataType="number" length="1" nullable="false"/>
 			<column name="STATE" property="state" dataType="number" length="1" nullable="false"/>
 			<column name="CREATE_USER_ID" property="createUserId" dataType="char" length="36" nullable="false"/>
 			<column name="CREATE_DATE" property="createDate" dataType="datetime" nullable="false"/>

@@ -8,14 +8,14 @@ set @tenantId= '200ceb26807d6bf99fd6f4f0d1ca54d40002'
 -- 初始化项目信息
 -- 根虚拟项目
 set @id = '0cebbecf-66dd-4d23-a2a7-57c7f5068fc6'
-insert into base_project(id, parent_id, root_id, level_, code, name, description, is_virtual, state, create_user_id, create_date, tenant_id)
-	values(@id, null, @id, 0, 'SMT_ROOT', 'SmartOne虚拟根项目', null, 1, 1, @adminId, getdate(), @tenantId)
+insert into base_project(id, parent_id, root_id, level_, code, name, description, is_virtual, is_default, state, create_user_id, create_date, tenant_id)
+	values(@id, null, @id, 0, 'SMT_ROOT', 'SmartOne虚拟根项目', null, 1, 0, 1, @adminId, getdate(), @tenantId)
 -- web项目
-insert into base_project(id, parent_id, root_id, level_, code, name, description, is_virtual, state, create_user_id, create_date, tenant_id)
-	values('fb377e9b-769a-4697-8a16-b8194131d2e7', @id, @id, 1, 'SMT_VC', 'SmartOne-可视化项目', null, 0, 1, @adminId, getdate(), @tenantId)
+insert into base_project(id, parent_id, root_id, level_, code, name, description, is_virtual, is_default, state, create_user_id, create_date, tenant_id)
+	values('fb377e9b-769a-4697-8a16-b8194131d2e7', @id, @id, 1, 'SMT_VC', 'SmartOne-可视化项目', null, 0, 0, 1, @adminId, getdate(), @tenantId)
 -- 触摸屏项目
-insert into base_project(id, parent_id, root_id, level_, code, name, description, is_virtual, state, create_user_id, create_date, tenant_id)
-	values('c632873a-05f7-4caf-b49d-b5888edd6013', @id, @id, 1, 'SMT_TS', 'SmartOne-触摸屏项目', null, 0, 1, @adminId, getdate(), @tenantId)
+insert into base_project(id, parent_id, root_id, level_, code, name, description, is_virtual, is_default, state, create_user_id, create_date, tenant_id)
+	values('c632873a-05f7-4caf-b49d-b5888edd6013', @id, @id, 1, 'SMT_TS', 'SmartOne-触摸屏项目', null, 0, 0, 1, @adminId, getdate(), @tenantId)
 select * from base_project
 
 

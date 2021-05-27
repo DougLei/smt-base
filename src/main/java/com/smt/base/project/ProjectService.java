@@ -27,6 +27,40 @@ public class ProjectService {
 	private ProjectConfigurationProperties properties;
 	
 	/**
+	 * 验证是否存在指定code的项目
+	 * @param code
+	 * @param tenantId
+	 */
+	public boolean codeExists(String code, String tenantId) {
+		return SessionContext.getSqlSession().uniqueQuery_("select id from base_project where code=? and tenant_id=?", Arrays.asList(code, tenantId)) != null;
+	}
+	
+	/**
+	 * 获取指定项目的父项目code集合
+	 * @param project
+	 * @return 指定的项目为根项目时返回null
+	 */
+	public List<String> getParentCodes(Project project) {
+		if(project.getLevel()== 0)
+			return null;
+		
+		List<String> codes = new ArrayList<String>(project.getLevel());
+		recursiveQueryParentCode(codes, project.getLevel()-1, project.getParentId());
+		return codes;
+	}
+	// 递归查询父项目的code
+	private void recursiveQueryParentCode(List<String> codes, int deep, Object parentId) {
+		Object[] parent = SessionContext.getSQLSession().uniqueQuery_("Project", "queryParentCode", parentId);
+		if(parent == null)
+			throw new SmtBaseException("递归查询父项目code时, 未能查询到id为["+parentId+"]的父项目");
+		codes.add(parent[1].toString());
+		
+		if(deep ==0)
+			return;
+		recursiveQueryParentCode(codes, deep--, parent[0]);
+	}
+
+	/**
 	 * 添加项目
 	 * @param builder
 	 * @return
@@ -34,6 +68,8 @@ public class ProjectService {
 	@Transaction
 	public Response insert(ProjectBuilder builder) {
 		Project project = builder.build4Insert();
+		if(codeExists(project.getCode(), project.getTenantId()))
+			return new Response(builder, "code", "已存在编码为[%s]的项目", "smt.base.project.fail.code.exists", project.getCode());
 		
 		// 计算并设置rootId, level
 		if(project.getParentId()== null) {
@@ -51,9 +87,6 @@ public class ProjectService {
 			project.setLevel(parent.getLevel()+1);
 		}
 		
-		if(SessionContext.getSQLSession().uniqueQuery(Project.class, "Project", "validateCodeExists", project) != null)
-			return new Response(builder, "code", "已存在编码为[%s]的项目", "smt.base.project.fail.code.exists", project.getCode());
-		
 		SessionContext.getTableSession().save(project);
 		return new Response(builder);
 	}
@@ -70,15 +103,10 @@ public class ProjectService {
 			throw new SmtBaseException("修改失败, 不存在id为["+builder.getId()+"]的项目");
 		
 		Project project = builder.build4Update(old);
+		if(!project.getCode().equals(old.getCode()) && codeExists(project.getCode(), project.getTenantId())) 
+			return new Response(builder, "code", "已存在编码为[%s]的项目", "smt.base.project.fail.code.exists", project.getCode());
 		if(!ObjectUtils.equals(project.getParentId(), old.getParentId()))
 			throw new SmtBaseException("修改失败, 禁止修改项目关联的父项目");
-		
-		// 判断是否修改了code
-		if(!project.getCode().equals(old.getCode())) {
-			Project exists = SessionContext.getSQLSession().uniqueQuery(Project.class, "Project", "validateCodeExists", project);
-			if(exists != null && exists.getId() != project.getId())
-				return new Response(builder, "code", "已存在编码为[%s]的项目", "smt.base.project.fail.code.exists", project.getCode());
-		}
 		
 		// 判断是否修改了isVirtual
 		if(old.getIsVirtual()==1 && project.getIsVirtual()==0) { // 从虚拟改成实体, 要验证子项目是否有虚拟项目, 如果存在, 则不能修改
@@ -106,10 +134,8 @@ public class ProjectService {
 		Project project = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from base_project where id=?", Arrays.asList(projectId));
 		if(project == null || project.getStateInstance() == State.DELETED)
 			throw new SmtBaseException("启用失败, 不存在id为["+projectId+"]的项目");
-		if(project.getStateInstance() == State.ENABLED)
-			return new Response(null, null, "项目处于[ENABLED]状态, 无法启用", "smt.base.project.enable.fail.state.error");
-		
-		SessionContext.getSqlSession().executeUpdate("update base_project set state=? where id=?", Arrays.asList(State.ENABLED.getValue(), projectId));
+		if(project.getStateInstance() == State.DISABLED)
+			SessionContext.getSqlSession().executeUpdate("update base_project set state=? where id=?", Arrays.asList(State.ENABLED.getValue(), projectId));
 		return new Response(projectId);
 	}
 	
@@ -123,15 +149,15 @@ public class ProjectService {
 		Project project = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from base_project where id=?", Arrays.asList(projectId));
 		if(project == null || project.getStateInstance() == State.DELETED)
 			throw new SmtBaseException("禁用失败, 不存在id为["+projectId+"]的项目");
-		if(project.getStateInstance() == State.DISABLED)
-			return new Response(null, null, "项目处于[DISABLED]状态, 无法禁用", "smt.base.project.disable.fail.state.error", project.getStateInstance());
 		
-		int childrenCount = Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_(
-				"select count(id) from base_project where parent_id=? and state=?", Arrays.asList(projectId, State.ENABLED.getValue()))[0].toString());
-		if(childrenCount > 0)
-			return new Response(null, null, "项目下存在[%d]个处于启用状态的子项目, 无法禁用", "smt.base.project.disable.fail.children.exists", childrenCount);
-		
-		SessionContext.getSqlSession().executeUpdate("update base_project set state=? where id=?", Arrays.asList(State.DISABLED.getValue(), projectId));
+		if(project.getStateInstance() == State.ENABLED) {
+			int childrenCount = Integer.parseInt(SessionContext.getSqlSession().uniqueQuery_(
+					"select count(id) from base_project where parent_id=? and state=?", Arrays.asList(projectId, State.ENABLED.getValue()))[0].toString());
+			if(childrenCount > 0)
+				return new Response(null, null, "项目下存在[%d]个处于启用状态的子项目, 无法禁用", "smt.base.project.disable.fail.children.exists", childrenCount);
+			
+			SessionContext.getSqlSession().executeUpdate("update base_project set is_default=0, state=? where id=?", Arrays.asList(State.DISABLED.getValue(), projectId));
+		}
 		return new Response(projectId);
 	}
 	
@@ -166,5 +192,43 @@ public class ProjectService {
 			ids.add(array[0]);
 		});
 		recursiveQueryChildrenIds(SessionContext.getSQLSession().query_("Project", "queryChildrenIds", childrenIds), ids);
+	}
+
+	/**
+	 * 设置默认项目
+	 * @param projectId
+	 * @return
+	 */
+	@Transaction
+	public Response setDefault(String projectId) {
+		Project project = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from base_project where id=?", Arrays.asList(projectId));
+		if(project == null || project.getStateInstance() == State.DELETED)
+			throw new SmtBaseException("设置默认项目失败, 不存在id为["+projectId+"]的项目");
+		if(project.getStateInstance() == State.DISABLED)
+			return new Response(projectId, null, "项目处于禁用状态, 无法设置为默认项目", "smt.base.project.set.default.fail.state.error");
+		
+		if(project.getIsDefault() == 0) {
+			SessionContext.getSqlSession().executeUpdate("update base_project set is_default=0 where root_id=?", Arrays.asList(project.getRootId()));
+			SessionContext.getSqlSession().executeUpdate("update base_project set is_default=1 where id=?", Arrays.asList(projectId));
+		}
+		return new Response(projectId);
+	}
+
+	/**
+	 * 取消默认项目
+	 * @param projectId
+	 * @return
+	 */
+	@Transaction
+	public Response setUnDefault(String projectId) {
+		Project project = SessionContext.getTableSession().uniqueQuery(Project.class, "select * from base_project where id=?", Arrays.asList(projectId));
+		if(project == null || project.getStateInstance() == State.DELETED)
+			throw new SmtBaseException("取消默认项目失败, 不存在id为["+projectId+"]的项目");
+		if(project.getStateInstance() == State.DISABLED)
+			throw new SmtBaseException("取消默认项目失败, id为["+projectId+"]的项目处于禁用状态");
+		
+		if(project.getIsDefault() == 1)
+			SessionContext.getSqlSession().executeUpdate("update base_project set is_default=0 where id=?", Arrays.asList(projectId));
+		return new Response(projectId);
 	}
 }
