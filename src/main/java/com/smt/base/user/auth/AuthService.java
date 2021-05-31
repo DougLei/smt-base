@@ -86,7 +86,7 @@ public class AuthService {
 			// 设置当前项目和其父项目集合; 查询当前的userId是否有权限登录当前的项目
 			token.setProjectCode(entity.getProjectCode());
 			token.setParentProjectCodes(projectService.getParentCodes(project));
-			if(Integer.parseInt(SessionContext.getSQLSession().uniqueQuery_("DataRel", "query4UserIdAndProjectCodes", token)[0].toString()) == 0)
+			if(Integer.parseInt(SessionContext.getSQLSession().uniqueQuery_("Auth", "query4UserIdAndProjectCodes", token)[0].toString()) == 0)
 				return new Response(entity, null, "无权登录系统, 请联系管理员", "smt.base.login.fail.no.right");
 			
 			DataRelWrapper wrapper = new DataRelWrapper(entity.getTenantId());
