@@ -43,7 +43,7 @@ public class UserController {
 		params.put("queryDeleted", "true".equalsIgnoreCase(request.getParameter("queryDeleted")));
 		params.put("tenantId", TokenContext.get().getTenantId());
 		
-		return queryExecutor.execute("QueryUserList", params, request);
+		return queryExecutor.execute("QueryUserList", params, request, "queryDeleted");
 	}
 	
 	/**

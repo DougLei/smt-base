@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.douglei.orm.context.PropagationBehavior;
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
@@ -26,13 +27,11 @@ public class ProjectService {
 	@Autowired
 	private ProjectConfigurationProperties properties;
 	
-	/**
-	 * 验证是否存在指定code的项目
-	 * @param code
-	 * @param tenantId
-	 */
-	public boolean codeExists(String code, String tenantId) {
-		return SessionContext.getSqlSession().uniqueQuery_("select id from base_project where code=? and tenant_id=?", Arrays.asList(code, tenantId)) != null;
+	// 验证code是否存在
+	private boolean codeExists(Project project) {
+		return SessionContext.getSqlSession().uniqueQuery_(
+				"select id from base_project where code=? and tenant_id=?", 
+				Arrays.asList(project.getCode(), project.getTenantId())) != null;
 	}
 	
 	/**
@@ -40,6 +39,7 @@ public class ProjectService {
 	 * @param project
 	 * @return 指定的项目为根项目时返回null
 	 */
+	@Transaction(propagationBehavior=PropagationBehavior.SUPPORTS)
 	public List<String> getParentCodes(Project project) {
 		if(project.getLevel()== 0)
 			return null;
@@ -68,7 +68,7 @@ public class ProjectService {
 	@Transaction
 	public Response insert(ProjectBuilder builder) {
 		Project project = builder.build4Insert();
-		if(codeExists(project.getCode(), project.getTenantId()))
+		if(codeExists(project))
 			return new Response(builder, "code", "已存在编码为[%s]的项目", "smt.base.project.fail.code.exists", project.getCode());
 		
 		// 计算并设置rootId, level
@@ -103,7 +103,7 @@ public class ProjectService {
 			throw new SmtBaseException("修改失败, 不存在id为["+builder.getId()+"]的项目");
 		
 		Project project = builder.build4Update(old);
-		if(!project.getCode().equals(old.getCode()) && codeExists(project.getCode(), project.getTenantId())) 
+		if(!project.getCode().equals(old.getCode()) && codeExists(project)) 
 			return new Response(builder, "code", "已存在编码为[%s]的项目", "smt.base.project.fail.code.exists", project.getCode());
 		if(!ObjectUtils.equals(project.getParentId(), old.getParentId()))
 			throw new SmtBaseException("修改失败, 禁止修改项目关联的父项目");

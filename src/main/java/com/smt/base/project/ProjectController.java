@@ -44,7 +44,7 @@ public class ProjectController {
 		params.put("queryDeleted", "true".equalsIgnoreCase(request.getParameter("queryDeleted")));
 		params.put("tenantId", TokenContext.get().getTenantId());
 		
-		return queryExecutor.execute("QueryProjectList", params, request);
+		return queryExecutor.execute("QueryProjectList", params, request, "queryDeleted");
 	}
 	
 	/**

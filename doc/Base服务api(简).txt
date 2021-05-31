@@ -104,7 +104,7 @@ POST
 --查询
 http://192.168.1.111:8502/smt-base/user/query
 GET
-可用的列(不区分大小写): id, type, name, real_name, sex, phone_num, email, is_deleted, create_user_id, create_date
+可用的列(不区分大小写): id, type, name, real_name, sex, sex_text, phone_num, email, create_user_id, create_date
 
 --查询账户
 http://192.168.1.111:8502/smt-base/user/account/query
@@ -127,6 +127,7 @@ POST
 	"email":"", -- 邮箱
 	"loginName":"", -- 开通的账户的登录名, 可不传, 默认为name
 	"loginPwd":"", -- 开通的账户的登录密码, 可不传, 默认为111111
+	"orgCode":"", -- 用户所属的组织机构code
 	"projectCode":"" --用户(默认)拥有登录权限的项目code, 如果传入null, 则无法登录任何系统, 需要单独授权
 }
 
@@ -140,7 +141,8 @@ POST
 	"realName":"", --真实姓名
 	"sex":1/2, -- 性别, 1男, 2女
 	"phoneNum":"", -- 手机号码
-	"email":"" -- 邮箱
+	"email":"", -- 邮箱
+	"orgCode":"", -- 用户所属的组织机构code
 }
 
 --删除
@@ -192,9 +194,16 @@ POST
 *********************************************************************************
 
 --查询
-http://192.168.1.111:8502/smt-base/user/query
+http://192.168.1.111:8502/smt-base/org/query
 GET
-可用的列(不区分大小写): id, parent_id, type, code, name, description, is_deleted, create_user_id, create_date
+可用的列(不区分大小写): id, parent_id, type, code, name, description, create_user_id, create_date
+
+
+--根据组织机构code, 查询相关的用户集合
+http://192.168.1.111:8502/smt-base/org/users/query?CODE=组织机构code
+GET
+可用的列(不区分大小写): id, type, name, real_name, sex, sex_text, phone_num, email, is_deleted, create_user_id, create_date, org_code, org_name
+
 
 --添加
 http://192.168.1.111:8502/smt-base/org/insert
@@ -234,14 +243,20 @@ http://192.168.1.111:8502/smt-base/role/query
 GET
 可用的列(不区分大小写): id, code, name, description, is_deleted, create_user_id, create_date
 
+
+--根据角色code和组织机构code, 查询相关的用户集合
+http://192.168.1.111:8502/smt-base/role/org/users/query?ROLE_CODE=角色code&ORG_CODE=组织机构code
+GET
+可用的列(不区分大小写): id, type, name, real_name, sex, sex_text, phone_num, email, is_deleted, create_user_id, create_date, org_code, org_name
+
+
 --添加
 http://192.168.1.111:8502/smt-base/role/insert
 POST
 {
 	"code":"", -- 编码
 	"name":"", -- 名称
-	"description":"", -- 描述
-	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
+	"description":"" -- 描述
 }
 
 --修改
@@ -251,8 +266,7 @@ POST
 	"id":"", --主键
 	"code":"", -- 编码
 	"name":"", -- 名称
-	"description":"", -- 描述
-	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
+	"description":"" -- 描述
 }
 
 --删除
@@ -276,8 +290,7 @@ POST
 {
 	"code":"", -- 编码
 	"name":"", -- 名称
-	"description":"", -- 描述
-	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
+	"description":"" -- 描述
 }
 
 --修改
@@ -287,8 +300,7 @@ POST
 	"id":"", --主键
 	"code":"", -- 编码
 	"name":"", -- 名称
-	"description":"", -- 描述
-	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
+	"description":"" -- 描述
 }
 
 --删除
@@ -316,8 +328,7 @@ http://192.168.1.111:8502/smt-base/dict/insert
 POST
 {
 	"code":"", -- 编码
-	"description":"", -- 描述
-	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
+	"description":"" -- 描述
 }
 
 --修改
@@ -326,8 +337,7 @@ POST
 {
 	"id":"", --主键
 	"code":"", -- 编码
-	"description":"", -- 描述
-	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
+	"description":"" -- 描述
 }
 
 --删除
@@ -386,9 +396,6 @@ POST
 	"childType":"", -- 子数据类型, 同parentType
 	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
 }
-
-
-
 
 
 

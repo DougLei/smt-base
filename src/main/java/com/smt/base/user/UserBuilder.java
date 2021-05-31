@@ -21,7 +21,8 @@ public class UserBuilder {
 	// 账户信息
 	private String loginName;
 	private String loginPwd;
-	// 关联的项目信息
+	// 关联的信息
+	private String orgCode;
 	private String projectCode;
 	
 	// 构建User实例, 设置基础数据
@@ -118,6 +119,12 @@ public class UserBuilder {
 	}
 	public void setLoginPwd(String loginPwd) {
 		this.loginPwd = loginPwd;
+	}
+	public String getOrgCode() {
+		return orgCode;
+	}
+	public void setOrgCode(String orgCode) {
+		this.orgCode = orgCode;
 	}
 	public String getProjectCode() {
 		return projectCode;

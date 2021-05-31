@@ -12,7 +12,6 @@ import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.douglei.tools.StringUtil;
 import com.smt.base.SmtBaseException;
-import com.smt.base.project.ProjectService;
 import com.smt.base.rel.DataRelService;
 import com.smt.base.rel.DataRelWrapper;
 import com.smt.base.rel.Type;
@@ -29,9 +28,6 @@ public class UserService {
 	@Autowired
 	private DataRelService dataRelService;
 	
-	@Autowired
-	private ProjectService projectService;
-	
 	// 验证name是否存在
 	private boolean nameExists(User user) {
 		return SessionContext.getSqlSession().uniqueQuery_(
@@ -43,6 +39,19 @@ public class UserService {
 		return SessionContext.getSqlSession().uniqueQuery_(
 				"select id from base_account where login_name=? and tenant_id=?", 
 				Arrays.asList(account.getLoginName(), account.getTenantId())) != null;
+	}
+	// 给用户设置所属的组织机构
+	private void setOrg2User(String userId, String orgCode, String tenantId) {
+		Object[] org =SessionContext.getSqlSession().uniqueQuery_("select is_deleted from base_org where code=? and tenant_id=?", Arrays.asList(orgCode, tenantId));
+		if(org== null || "1".equals(org[0].toString()))
+			throw new SmtBaseException("添加用户失败, 不存在编码为["+orgCode+"]的组织机构");
+		
+		DataRelWrapper wrapper = new DataRelWrapper(tenantId);
+		wrapper.setParentTypeInstance(Type.USER_ID);
+		wrapper.setParentValue(userId);
+		wrapper.setChildTypeInstance(Type.ORG_CODE);
+		wrapper.setChildValues(orgCode);
+		dataRelService.operate(wrapper);
 	}
 	
 	/**
@@ -65,16 +74,21 @@ public class UserService {
 			SessionContext.getTableSession().save(account);
 		}
 		
+		// 给用户设置所属的组织机构
+		if(builder.getOrgCode() != null) 
+			setOrg2User(user.getId(), builder.getOrgCode(), user.getTenantId());
+			
 		// 给用户设置(默认)可登录的系统
 		if(builder.getProjectCode() != null) {
-			if(!projectService.codeExists(builder.getProjectCode(), user.getTenantId()))
+			Object[] project =SessionContext.getSqlSession().uniqueQuery_("select state from base_project where code=? and tenant_id=?", Arrays.asList(builder.getProjectCode(), user.getTenantId()));
+			if(project== null || "3".equals(project[0].toString()))
 				throw new SmtBaseException("添加用户失败, 不存在编码为["+builder.getProjectCode()+"]的项目");
 			
 			DataRelWrapper wrapper = new DataRelWrapper(user.getTenantId());
 			wrapper.setParentTypeInstance(Type.USER_ID);
 			wrapper.setParentValue(user.getId());
 			wrapper.setChildTypeInstance(Type.PROJECT_CODE);
-//			wrapper.setChildValues(builder.getProjectCode());????
+			wrapper.setChildValues(builder.getProjectCode());
 			dataRelService.operate(wrapper);
 		}
 		
@@ -96,6 +110,10 @@ public class UserService {
 		User user = builder.build4Update();
 		if(!user.getName().equals(old.getName()) && nameExists(user))
 			return new Response(builder, "name", "名称[%s]已被使用", "smt.base.user.fail.name.exists", user.getName());
+		
+		// 给用户设置所属的组织机构
+		if(builder.getOrgCode() != null) 
+			setOrg2User(user.getId(), builder.getOrgCode(), user.getTenantId());
 		
 		SessionContext.getTableSession().update(user);
 		return new Response(builder);

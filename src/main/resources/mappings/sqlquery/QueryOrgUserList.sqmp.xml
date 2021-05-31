@@ -1,15 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <mapping-configuration>
-	<!-- 查询用户 -->
-	<sql-query name="QueryUserList">
+	<!-- 根据组织机构code, 查询相关的用户集合 -->
+	<sql-query name="QueryOrgUserList">
 		<content>
-			select user_.*, case sex when 1 then '男' when 2 then '女' else 'ERR' end sex_text, org.code org_code, org.name org_name from base_user user_
-				left join base_data_rel rel on (rel.left_value= user_.id)
-				left join base_org org on (rel.right_value=org.code and rel.right_type='ORG_CODE')
-			 		where user_.tenant_id= #{tenantId} and 
-					<if test="!queryDeleted">
-						and user_.is_deleted=0
-					</if>
+			select user_.*, case user_.sex when 1 then '男' when 2 then '女' else 'ERR' end sex_text, org_.name org_name from base_data_rel rel
+				left join base_user user_ on (user_.id = rel.left_value)
+				left join base_org org_ on (org_.code= rel.right_value and rel.right_type='ORG_CODE' and rel.tenant_id=#{tenantId})
+					where rel.left_type='USER_ID' and rel.right_type='ORG_CODE' and  
+					<foreach collection="codes" alias="code" open="rel.right_value in (" separator="," close=")">
+						#{code}
+					</foreach> 
+					and rel.tenant_id= #{tenantId}
 		</content>
 		
 		<parameters>

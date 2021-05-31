@@ -16,7 +16,6 @@
 			<parameter name="code" dataType="string" />
 			<parameter name="name" dataType="string" />
 			<parameter name="description" dataType="string" />
-			<parameter name="is_deleted" dataType="number" />
 			<parameter name="create_user_id" dataType="string" />
 			<parameter name="create_date" dataType="datetime" />
 		</parameters>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<sql namespace="Org">
+		
+		<!-- 查询子组织机构集合 -->
+		<content name="queryChildren" type="select">
+			select id, code from base_org where 
+			<foreach collection="ids" alias="id" open="parent_id in (" separator="," close=")">
+				#{[0]}
+			</foreach> 
+		</content>
+		
+	</sql>
+</mapping-configuration>

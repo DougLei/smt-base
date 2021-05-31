@@ -45,9 +45,9 @@ public class DictController {
 	public Response query(HttpServletRequest request) {
 		Map<String, Object> params = new HashMap<String, Object>(4);
 		params.put("queryDeleted", "true".equalsIgnoreCase(request.getParameter("queryDeleted")));
-		params.put("token", TokenContext.get().getTenantId());
+		params.put("token", TokenContext.get());
 		
-		return queryExecutor.execute("QueryDictList", TokenContext.get(), request);
+		return queryExecutor.execute("QueryDictList", TokenContext.get(), request, "queryDeleted");
 	}
 	
 	/**
@@ -75,6 +75,7 @@ public class DictController {
 			dict.setId(UUID.randomUUID().toString());
 		dict.setCreateUserId(token.getUserId());
 		dict.setCreateDate(token.getCurrentDate());
+		dict.setProjectCode(token.getProjectCode());
 		dict.setTenantId(token.getTenantId());
 		
 		return service.insert(dict);
@@ -90,7 +91,10 @@ public class DictController {
 	public Response update(Dict dict) {
 		dict.setCreateUserId(null);
 		dict.setCreateDate(null);
-		dict.setTenantId(TokenContext.get().getTenantId());
+		
+		TokenEntity token = TokenContext.get();
+		dict.setProjectCode(token.getProjectCode());
+		dict.setTenantId(token.getTenantId());
 		
 		return service.update(dict);
 	}

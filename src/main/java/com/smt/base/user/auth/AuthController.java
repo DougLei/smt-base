@@ -1,5 +1,8 @@
 package com.smt.base.user.auth;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +13,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.douglei.tools.StringUtil;
+import com.douglei.tools.datatype.DataTypeValidateUtil;
 import com.douglei.tools.web.HttpUtil;
+import com.smt.base.SmtBaseException;
 import com.smt.parent.code.filters.FilterEnum;
 import com.smt.parent.code.filters.log.LogContext;
 import com.smt.parent.code.filters.token.TokenContext;
@@ -177,27 +182,47 @@ public class AuthController {
 	
 	/**
 	 * 查询token
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value = "/token/query", method = RequestMethod.GET)
 	public Response queryToken(HttpServletRequest request) {
-		// TODO
+		String token = request.getParameter("token");
+		if(StringUtil.unEmpty(token))
+			return new Response(tokenContainer.get(token));
 		
+		String userId = request.getParameter("userId");
+		if(StringUtil.unEmpty(userId))
+			return new Response(tokenContainer.getByUserId(userId));
 		
-		return null;
+		Map<String, Object> tokens = new HashMap<String, Object>(4);
+		tokens.put("count", tokenContainer.getAll().size());
+		tokens.put("tokens", tokenContainer.getAll());
+		return new Response(tokens);
 	}
 	
 	/**
 	 * 下线
+	 * @param request
 	 * @return
 	 */
 	@LoggingResponse
 	@RequestMapping(value = "/token/offline", method = RequestMethod.GET)
-	public Response offline() {
-		// TODO
+	public Response offline(HttpServletRequest request) {
+		String token = request.getParameter("token");
+		if(StringUtil.unEmpty(token)) {
+			tokenContainer.remove(token);
+			return new Response(token);
+		}
 		
-		return null;
+		String userId = request.getParameter("userId");
+		if(StringUtil.unEmpty(userId)) {
+			tokenContainer.removeByUserId(userId);
+			return new Response(userId);
+		}
+		
+		throw new SmtBaseException("token offline时, 存在不合法的参数");
 	}
 	
 	/**
@@ -208,9 +233,13 @@ public class AuthController {
 	@LoggingResponse
 	@RequestMapping(value = "/token/gc/execute", method = RequestMethod.GET)
 	public Response execTokenGCJob(HttpServletRequest request) {
-		// TODO
+		long tokenValidTimes = properties.getTokenValidTimes();
 		
+		String validMinute = request.getParameter("validMinute");
+		if(DataTypeValidateUtil.isInteger(validMinute))
+			tokenValidTimes = Integer.parseInt(validMinute) * 60000;
 		
-		return null;
+		tokenContainer.execGC(tokenValidTimes);
+		return new Response(tokenValidTimes/60000);
 	}
 }

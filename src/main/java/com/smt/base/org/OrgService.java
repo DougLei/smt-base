@@ -1,8 +1,11 @@
 package com.smt.base.org;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.douglei.orm.context.SessionContext;
@@ -11,6 +14,7 @@ import com.douglei.orm.context.TransactionComponent;
 import com.smt.base.SmtBaseException;
 import com.smt.base.rel.DataRelService;
 import com.smt.base.rel.Type;
+import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.response.Response;
 
 /**
@@ -65,7 +69,7 @@ public class OrgService {
 		Org old = SessionContext.getSqlSession().uniqueQuery(Org.class, "select * from base_org where id=?", Arrays.asList(org.getId()));
 		if(old == null || old.getIsDeleted() == 1)
 			throw new SmtBaseException("修改失败, 不存在id为["+org.getId()+"]的组织机构/部门");
-		if(org.getParentId() != old.getParentId())
+		if(!ObjectUtils.equals(org.getParentId(), old.getParentId()))
 			throw new SmtBaseException("修改失败, 禁止修改关联的父组织机构/部门");
 		
 		// 判断是否修改了code
@@ -108,5 +112,36 @@ public class OrgService {
 		SessionContext.getSqlSession().executeUpdate("update base_org set is_deleted=1 where id=?", list);
 		dataRelService.deleteAll(Type.ORG_CODE, org.getCode());
 		return new Response(orgId);
+	}
+	
+	/**
+	 * 获取指定组织机构的子组织机构code集合
+	 * @param code
+	 * @return
+	 */
+	@Transaction
+	public List<String> getChildCodes(String code) {
+		Org org = SessionContext.getSqlSession().uniqueQuery(Org.class, "select * from base_org where code=? and tenant_id=?", Arrays.asList(code, TokenContext.get().getTenantId()));
+		if(org == null || org.getIsDeleted()== 1)
+			throw new SmtBaseException("不存在code为["+code+"]的组织机构");
+		
+		HashSet<Object> ids = new HashSet<Object>();
+		ids.add(org.getId());
+		
+		List<String> codes = new ArrayList<String>();
+		recursiveQueryChildCodes(ids, SessionContext.getSqlSession().query_("select id, code from base_org where parent_id=?", Arrays.asList(org.getId())), codes);
+		return codes;
+	}
+	private void recursiveQueryChildCodes(HashSet<Object> ids, List<Object[]> childrens, List<String> codes) {
+		if(childrens.isEmpty())
+			return;
+		
+		childrens.forEach(children -> {
+			if(ids.contains(children[0]))
+				throw new SmtBaseException("递归查询子组织机构时, 出现重复的id值["+children[0]+"]");
+			ids.add(children[0]);
+			codes.add(children[1].toString());
+		});
+		recursiveQueryChildCodes(ids, SessionContext.getSQLSession().query_("Org", "queryChildren", childrens), codes);
 	}
 }

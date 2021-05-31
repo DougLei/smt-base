@@ -43,9 +43,9 @@ public class PostController {
 	public Response query(HttpServletRequest request) {
 		Map<String, Object> params = new HashMap<String, Object>(4);
 		params.put("queryDeleted", "true".equalsIgnoreCase(request.getParameter("queryDeleted")));
-		params.put("token", TokenContext.get().getTenantId());
+		params.put("token", TokenContext.get());
 		
-		return queryExecutor.execute("QueryPostList", TokenContext.get(), request);
+		return queryExecutor.execute("QueryPostList", TokenContext.get(), request, "queryDeleted");
 	}
 	
 	/**
@@ -62,6 +62,7 @@ public class PostController {
 		post.setIsDeleted(0);
 		post.setCreateUserId(token.getUserId());
 		post.setCreateDate(token.getCurrentDate());
+		post.setProjectCode(token.getProjectCode());
 		post.setTenantId(token.getTenantId());
 		
 		return service.insert(post);
@@ -78,7 +79,10 @@ public class PostController {
 		post.setIsDeleted(0);
 		post.setCreateUserId(null);
 		post.setCreateDate(null);
-		post.setTenantId(TokenContext.get().getTenantId());
+		
+		TokenEntity token = TokenContext.get();
+		post.setProjectCode(token.getProjectCode());
+		post.setTenantId(token.getTenantId());
 		
 		return service.update(post);
 	}

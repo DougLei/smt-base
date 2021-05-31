@@ -12,9 +12,9 @@ jdb:
 spring:
   datasource:
         type: com.alibaba.druid.pool.DruidDataSource
-        url: jdbc:sqlserver://192.168.1.222:1433;DatabaseName=SMT_BASE
+        url: jdbc:sqlserver://192.168.1.111:1433;DatabaseName=TEMP_SMT_BASE
         username: sa
-        password: root
+        password: 123_abc
   application: 
       name: smt-base
 
@@ -22,7 +22,7 @@ smt:
   base:
     auth:
       enable-client-type-limit: false
-      token-valid-time: 120
+      token-valid-minute: 120
       clogin-accounts:
       - login-name: admin
         tenant-id: 200ceb26807d6bf99fd6f4f0d1ca54d40002
@@ -43,9 +43,12 @@ smt:
           - /login
           - /token/validate/*
           - /token/update
+          - /token/query
+          - /token/offline
+          - /token/gc/execute
 
 # 指定该服务要注册进指定url的服务注册中心  
 eureka:
   client:
     service-url:
-      defaultZone: http://192.168.1.252:8501/eureka/
+      defaultZone: http://192.168.1.200:8501/eureka/

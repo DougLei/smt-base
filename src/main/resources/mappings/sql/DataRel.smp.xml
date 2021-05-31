@@ -43,5 +43,22 @@
 			</switch>
 		</content>
 		
+		<!-- 查询指定的userId和projectCodes是否存在关联数据 -->
+		<content name="query4UserIdAndProjectCodes" type="select">
+			select count(id) from base_data_rel where left_type='USER_ID' and left_value=#{userId} and right_type='PROJECT_CODE' and 
+			<switch>
+				<if test="parentProjectCodes == null">
+					right_value= #{projectCode}
+				</if>
+				<else>
+					right_value in (#{projectCode},
+					<foreach collection="parentProjectCodes" alias="parentProjectCode" separator="," close=") ">
+						#{parentProjectCode}
+					</foreach> 
+				</else>
+			</switch>
+			and tenant_id=#{tenantId}
+		</content>
+		
 	</sql>
 </mapping-configuration>

@@ -95,6 +95,24 @@ public class TokenContainer {
 	}
 	
 	/**
+	 * 获取token
+	 * @param userId
+	 * @return
+	 */
+	public List<TokenEntity> getByUserId(String userId) {
+		return user_tokens_container.get(userId);
+	}
+	
+	/**
+	 * 获取token
+	 * @param token
+	 * @return
+	 */
+	public Map<String, List<TokenEntity>> getAll() {
+		return user_tokens_container;
+	}
+	
+	/**
 	 * 移除token
 	 * @param token
 	 */
@@ -129,12 +147,12 @@ public class TokenContainer {
 			return;
 		
 		List<String> removeUserIds = new ArrayList<String>(); // user_tokens_container中要移除的userId
-		long currentTime = new Date().getTime();
+		long currentTime = new Date().getTime()-tokenValidTimes;
 		for(Entry<String, List<TokenEntity>> entry: user_tokens_container.entrySet()) {
 			List<TokenEntity> list = entry.getValue();
 			
 			for(int i=0; i<list.size(); i++) {
-				if(list.get(i).getLastOpDate().getTime()+tokenValidTimes < currentTime) 
+				if(list.get(i).getLastOpDate().getTime() < currentTime) 
 					list.remove(i--);
 			}
 			if(list.isEmpty())

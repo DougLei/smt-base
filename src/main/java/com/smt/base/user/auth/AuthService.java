@@ -72,6 +72,8 @@ public class AuthService {
 		
 		// 初始化token实例
 		TokenEntity token = new TokenEntity();
+		token.setUserId(account.getUserId());
+		token.setTenantId(entity.getTenantId());
 		
 		// 如果ProjectCode不为空时, 验证登录权限, 以及查询用户相关的数据
 		if(entity.getProjectCode() != null) {
@@ -80,15 +82,12 @@ public class AuthService {
 				throw new SmtBaseException("登录失败, 不存在编码为["+entity.getProjectCode()+"]的项目");
 			if(project.getIsVirtual() == 1)
 				throw new SmtBaseException("禁止登录编码为["+entity.getProjectCode()+"]的虚拟项目");
-			if(SessionContext.getSqlSession().uniqueQuery_(
-					"select id from base_data_rel where left_type=? and left_value=? and right_type=? and right_value=? and tenant_id=?", 
-					Arrays.asList(Type.USER_ID.name(), account.getUserId(), Type.PROJECT_CODE.name(), entity.getProjectCode(), entity.getTenantId())) == null)
-				return new Response(entity, null, "无权登录系统, 请联系管理员", "smt.base.login.fail.no.right");
 			
-			// 设置当前项目和其父项目集合
+			// 设置当前项目和其父项目集合; 查询当前的userId是否有权限登录当前的项目
 			token.setProjectCode(entity.getProjectCode());
 			token.setParentProjectCodes(projectService.getParentCodes(project));
-			
+			if(Integer.parseInt(SessionContext.getSQLSession().uniqueQuery_("DataRel", "query4UserIdAndProjectCodes", token)[0].toString()) == 0)
+				return new Response(entity, null, "无权登录系统, 请联系管理员", "smt.base.login.fail.no.right");
 			
 			DataRelWrapper wrapper = new DataRelWrapper(entity.getTenantId());
 			wrapper.setParentTypeInstance(Type.USER_ID);
@@ -108,9 +107,7 @@ public class AuthService {
 		
 		token.setValue(UUID.randomUUID().toString());
 		token.setAccountId(account.getId());
-		token.setUserId(account.getUserId());
 		token.setUserName(SessionContext.getSqlSession().uniqueQuery(User.class, "select name, real_name from base_user where id=?", Arrays.asList(account.getUserId())).getUserName());
-		token.setTenantId(entity.getTenantId());
 		token.setLoginDate(currentDate);
 		token.setLastOpDate(currentDate);
 		token.setClientType(entity.getClientType());
