@@ -43,5 +43,32 @@
 			</switch>
 		</content>
 		
+		<!-- 删除 -->
+		<content name="delete" type="delete">
+			<switch>
+				<if test="flag == 1">
+					delete base_data_rel where left_type=#{parentType} and left_value=#{parentValue} and right_type=#{childType} and tenant_id=#{tenantId} 
+					<foreach collection="childValues.split(',')" alias="childValue" open="and right_value in (" separator="," close=")">
+						#{childValue}
+					</foreach> 
+				</if>
+				<else>
+					delete base_data_rel where right_type=#{parentType} and right_value=#{parentValue} and left_type=#{childType} and tenant_id=#{tenantId} 
+					<foreach collection="childValues.split(',')" alias="childValue" open="and left_value in (" separator="," close=")">
+						#{childValue}
+					</foreach> 
+				</else>
+			</switch>
+		
+			<switch>
+				<if test="projectCode == null">
+					and project_code is null
+				</if>
+				<else>
+					and project_code=#{projectCode}
+				</else>
+			</switch>
+		</content>
+		
 	</sql>
 </mapping-configuration>

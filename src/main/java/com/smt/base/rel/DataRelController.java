@@ -42,4 +42,28 @@ public class DataRelController {
 	public Response queryValues(@RequestBody DataRelWrapper wrapper) {
 		return new Response(service.queryValues(wrapper));
 	}
+	
+	/**
+	 * 增加数据关联关系
+	 * @param wrapper
+	 * @return
+	 */
+	@LoggingResponse
+	@RequestMapping(value="/insert", method=RequestMethod.POST)
+	public Response insert(@RequestBody DataRelWrapper wrapper) {
+		service.insert(wrapper);
+		return new Response(wrapper);
+	}
+	
+	/**
+	 * 删除数据关联关系
+	 * @param wrapper
+	 * @return
+	 */
+	@LoggingResponse
+	@RequestMapping(value="/delete", method=RequestMethod.POST)
+	public Response delete(@RequestBody DataRelWrapper wrapper) {
+		service.delete(wrapper);
+		return new Response(wrapper);
+	}
 }

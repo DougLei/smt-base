@@ -4,8 +4,8 @@
 	<sql-query name="QueryUserList">
 		<content>
 			select user_.*, case sex when 1 then '男' when 2 then '女' else 'ERR' end sex_text, org.code org_code, org.name org_name from base_user user_
-				left join base_data_rel rel on (rel.left_value= user_.id)
-				left join base_org org on (rel.right_value=org.code and rel.right_type='ORG_CODE')
+				left join base_data_rel rel on (rel.left_value= user_.id and rel.right_type='ORG_CODE')
+				left join base_org org on (rel.right_type='ORG_CODE' and rel.right_value=org.code and rel.tenant_id = #{tenantId})
 			 		where user_.tenant_id= #{tenantId} 
 					<if test="!queryDeleted">
 						and user_.is_deleted=0

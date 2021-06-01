@@ -397,7 +397,27 @@ POST
 	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
 }
 
+--增加
+http://192.168.1.111:8502/smt-base/data/rel/insert
+POST
+{
+	"parentType":"", -- 主数据类型, 目前支持的值(不区分大小写): USER_ID, ORG_CODE, ROLE_CODE, POST_CODE
+	"parentValue":"", -- 主数据值
+	"childType":"", -- 子数据类型, 同parentType
+	"childValues":"", -- 子数据值, 多个用,分割; 如果传入null, 则可以删除之前的关联关系
+	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
+}
 
+--删除
+http://192.168.1.111:8502/smt-base/data/rel/delete
+POST
+{
+	"parentType":"", -- 主数据类型, 目前支持的值(不区分大小写): USER_ID, ORG_CODE, ROLE_CODE, POST_CODE
+	"parentValue":"", -- 主数据值
+	"childType":"", -- 子数据类型, 同parentType
+	"childValues":"", -- 子数据值, 多个用,分割; 如果传入null, 则可以删除之前的关联关系
+	"projectCode":"" -- 所属的项目编码, 可不传, null标识为租户全局范围
+}
 
 
 

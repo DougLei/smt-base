@@ -17,17 +17,9 @@ import com.smt.parent.code.filters.token.TokenContext;
  */
 @TransactionComponent
 public class DataRelService {
-
-	/**
-	 * 增删改数据关联关系
-	 * @param wrapper
-	 */
-	@Transaction
-	public void operate(DataRelWrapper wrapper) {
-		// 先删除旧的关联关系数据
-		SessionContext.getSQLSession().executeUpdate("DataRel", "deleteValues", wrapper);
-		
-		// 再添加新的关联关系数据
+	
+	// 添加新的关联关系数据
+	private void insert_(DataRelWrapper wrapper) {
 		if(StringUtil.isEmpty(wrapper.getChildValues()))
 			return;
 		
@@ -41,6 +33,19 @@ public class DataRelService {
 				list.add(new DataRel(wrapper.getChildType(), childValue, wrapper.getParentType(), wrapper.getParentValue(), wrapper.getProjectCode(), wrapper.getTenantId()));
 		}
 		SessionContext.getTableSession().save(list);
+	}
+	
+	/**
+	 * 增删改数据关联关系
+	 * @param wrapper
+	 */
+	@Transaction
+	public void operate(DataRelWrapper wrapper) {
+		// 先删除旧的关联关系数据
+		SessionContext.getSQLSession().executeUpdate("DataRel", "deleteValues", wrapper);
+		
+		// 再添加新的关联关系数据
+		insert_(wrapper);
 	}
 
 	/**
@@ -70,5 +75,27 @@ public class DataRelService {
 		List<Object> params = Arrays.asList(type.name(), value, TokenContext.get().getTenantId());
 		return SessionContext.getSqlSession().executeUpdate("delete base_data_rel where left_type=? and left_value=? and tenant_id=?", params) 
 				+ SessionContext.getSqlSession().executeUpdate("delete base_data_rel where right_type=? and right_value=? and tenant_id=?", params);
+	}
+	
+	/**
+	 * 增加数据关联关系
+	 * @param wrapper
+	 */
+	@Transaction
+	public void insert(DataRelWrapper wrapper) {
+		// 先删除旧的关联关系数据
+		SessionContext.getSQLSession().executeUpdate("DataRel", "delete", wrapper);
+		
+		// 再添加新的关联关系数据
+		insert_(wrapper);
+	}
+	
+	/**
+	 * 删除数据关联关系
+	 * @param wrapper
+	 */
+	@Transaction
+	public void delete(DataRelWrapper wrapper) {
+		SessionContext.getSQLSession().executeUpdate("DataRel", "delete", wrapper);
 	}
 }
