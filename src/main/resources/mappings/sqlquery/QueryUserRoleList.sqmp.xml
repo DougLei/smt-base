@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mapping-configuration>
+	<!-- 根据用户id, 查询角色集合 -->
+	<sql-query name="QueryUserRoleList">
+		<content>
+			select role_.*, case when rel.left_value is null then 2 else 1 end is_checked from base_role role_
+				left join base_data_rel rel on (rel.left_type='USER_ID' and rel.left_value=#{id} and rel.right_type='ROLE_CODE' and rel.right_value=role_.code and rel.tenant_id= #{token.tenantId})
+					where role_.is_deleted=0 and role_.tenant_id=#{token.tenantId} and role_.project_code 
+					<switch>
+						<if test="token.parentProjectCodes == null">
+							=#{token.projectCode}
+						</if>
+						<else>
+							in (#{token.projectCode},
+							<foreach collection="token.parentProjectCodes" alias="code" separator="," close=")">
+								#{code}
+							</foreach> 
+						</else>
+					</switch>
+		</content>
+		
+		<parameters>
+			<parameter name="id" dataType="string" />
+			<parameter name="code" dataType="string" />
+			<parameter name="name" dataType="string" />
+		</parameters>
+	</sql-query>
+</mapping-configuration>

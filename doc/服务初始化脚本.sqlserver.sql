@@ -39,8 +39,8 @@ select * from base_user
 	
 -- 初始化角色
 -- 管理员角色
-insert into base_role(id, code, name, is_deleted, create_user_id, create_date, tenant_id)
-	values('7de8f0a0-80f1-48f6-8eb9-a941c7f8aa75', 'administrator', '管理员', 0, @adminId, getdate(), @tenantId)
+insert into base_role(id, code, name, is_deleted, create_user_id, create_date, project_code, tenant_id)
+	values('7de8f0a0-80f1-48f6-8eb9-a941c7f8aa75', 'administrator', '管理员', 0, @adminId, getdate(), 'SMT_ROOT', @tenantId)
 select * from base_role	
 
 

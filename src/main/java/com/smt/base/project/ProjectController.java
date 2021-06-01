@@ -48,6 +48,17 @@ public class ProjectController {
 	}
 	
 	/**
+	 * 根据项目code和组织机构code, 查询与项目code有关联的用户id集合(用,分隔开)
+	 * @param name
+	 * @param request
+	 * @return
+	 */
+	@RequestMapping(value="/org/userids/query", method=RequestMethod.GET)
+	public Response queryOrgUserids(HttpServletRequest request) {
+		return service.queryOrgUserids(request);
+	} 
+	
+	/**
 	 * 插入项目
 	 * @param builder
 	 * @param request

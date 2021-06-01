@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.filters.token.TokenEntity;
-import com.smt.parent.code.query.QueryCriteriaEntity;
 import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
@@ -50,7 +49,7 @@ public class OrgController {
 	}
 	
 	/**
-	 * 根据组织机构code, 查询相关的用户集合
+	 * 根据组织机构code, 查询用户集合
 	 * @param name
 	 * @param request
 	 * @return
@@ -67,9 +66,8 @@ public class OrgController {
 		params.put("codes", codes);
 		params.put("tenantId", TokenContext.get().getTenantId());
 		
-		// 获取动态查询参数实例, 并执行查询
-		QueryCriteriaEntity entity = queryExecutor.parse(request, "CODE");
-		return queryExecutor.execute("QueryOrgUserList", params, entity);
+		// 执行查询
+		return queryExecutor.execute("QueryOrgUserList", params, request, "CODE");
 	} 
 	
 	/**

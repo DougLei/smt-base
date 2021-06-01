@@ -47,6 +47,21 @@ public class UserController {
 	}
 	
 	/**
+	 * 根据用户id, 查询角色集合
+	 * @param request
+	 * @return
+	 */
+	@LoggingResponse(loggingBody=false)
+	@RequestMapping(value="/roles/query", method=RequestMethod.GET)
+	public Response queryRoles(HttpServletRequest request) {
+		Map<String, Object> params = new HashMap<String, Object>(4);
+		params.put("id", request.getParameter("ID"));
+		params.put("token", TokenContext.get());
+		
+		return queryExecutor.execute("QueryUserRoleList", params, request, "ID");
+	}
+	
+	/**
 	 * 用户查询(流程服务)
 	 * @param request
 	 * @return

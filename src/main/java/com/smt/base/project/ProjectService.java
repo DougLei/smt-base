@@ -2,7 +2,11 @@ package com.smt.base.project;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +15,18 @@ import com.douglei.orm.context.PropagationBehavior;
 import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
+import com.douglei.orm.sessionfactory.sessions.session.sqlquery.impl.AbstractParameter;
+import com.douglei.orm.sessionfactory.sessions.session.sqlquery.impl.Operator;
+import com.douglei.orm.sessionfactory.sessions.session.sqlquery.impl.Parameter;
 import com.smt.base.SmtBaseException;
+import com.smt.base.org.OrgService;
 import com.smt.base.project.entity.Project;
 import com.smt.base.project.entity.ProjectBuilder;
 import com.smt.base.project.entity.State;
+import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.filters.token.TokenEntity;
+import com.smt.parent.code.query.QueryCriteriaEntity;
+import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 
 /**
@@ -26,6 +38,13 @@ public class ProjectService {
 	
 	@Autowired
 	private ProjectConfigurationProperties properties;
+	
+	@Autowired
+	private OrgService orgService;
+	
+	@Autowired
+	private QueryExecutor queryExecutor;
+	
 	
 	// 验证code是否存在
 	private boolean codeExists(Project project) {
@@ -58,6 +77,59 @@ public class ProjectService {
 		if(deep ==0)
 			return;
 		recursiveQueryParentCode(codes, deep--, parent[0]);
+	}
+	
+	/**
+	 * 根据项目code和组织机构code, 查询与项目code有关联的用户id集合(用,分隔开)
+	 * @param params
+	 * @param entity
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	@Transaction
+	public Response queryOrgUserids(HttpServletRequest request) {
+		TokenEntity tokenEntity = TokenContext.get();
+		
+		// 第一步: 查询指定组织机构下所有的用户id集合
+		String code = request.getParameter("ORG_CODE");
+		List<String> codes =orgService.getChildCodes(code);
+		codes.add(code);
+		
+		Map<String, Object> params = new HashMap<String, Object>(8);
+		params.put("code", tokenEntity.getProjectCode());
+		params.put("codes", codes);
+		params.put("tenantId", tokenEntity.getTenantId());
+		
+		QueryCriteriaEntity entity = queryExecutor.parse(request, "ORG_CODE");
+		if(entity.getParameters() == null) {
+			List<AbstractParameter> parameters = new ArrayList<AbstractParameter>(1);
+			entity = new QueryCriteriaEntity(entity.getMode(), parameters);
+		}
+		entity.getParameters().add(new Parameter(false, Operator.RESULT, "ID"));
+		List<Map<String, Object>> userIds = (List<Map<String, Object>>) entity.getMode().executeQuery("QueryOrgUserList", params, entity.getParameters());
+		
+		// 第二步: 当以上的userIds不为空时, 从其中(筛选)查询出和当前项目有关联的userId集合
+		if(!userIds.isEmpty()) {
+			params.put("userIds", userIds);
+			entity.getParameters().remove(entity.getParameters().size()-1);
+			
+			userIds = (List<Map<String, Object>>) entity.getMode().executeQuery("QueryProjectUseridList", params, null);
+			
+			// 第三步: 当(筛选)查询的userIds不为空时, 将其拼接成字符串, 多个id用,分割; 并返回
+			if(!userIds.isEmpty()) {
+				StringBuilder sb = new StringBuilder(userIds.size() * 37);
+				userIds.forEach(userId -> sb.append(userId.get("LEFT_VALUE")).append(','));
+				sb.setLength(sb.length()-1);
+				
+				params.clear();
+				params.put("ids", sb);
+				return new Response(params);
+			}
+		}
+			
+		params.clear();
+		params.put("ids", null);
+		return new Response(params);
 	}
 
 	/**

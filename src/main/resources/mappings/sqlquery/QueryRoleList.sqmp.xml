@@ -3,20 +3,20 @@
 	<!-- 查询角色 -->
 	<sql-query name="QueryRoleList">
 		<content>
-			select * from base_role where project_code= #{token.projectCode} and tenant_id= #{token.tenantId}
+			select * from base_role where tenant_id= #{token.tenantId} and project_code 
+			<switch>
+				<if test="token.parentProjectCodes == null">
+					=#{token.projectCode}
+				</if>
+				<else>
+					in (#{token.projectCode},
+					<foreach collection="token.parentProjectCodes" alias="code" separator="," close=")">
+						#{code}
+					</foreach> 
+				</else>
+			</switch>
 			<if test="!queryDeleted">
 				and is_deleted=0
-			</if>
-			
-			<if test="token.parentProjectCodes != null">
-				union
-				select * from base_role where tenant_id= #{tenantId} and 
-				<foreach collection="token.parentProjectCodes" alias="code" open="project_code in (" separator="," close=")">
-					#{code}
-				</foreach> 
-				<if test="!queryDeleted">
-					and is_deleted=0
-				</if>
 			</if>
 		</content>
 		

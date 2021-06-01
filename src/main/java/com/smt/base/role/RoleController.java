@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.smt.base.org.OrgService;
 import com.smt.parent.code.filters.token.TokenContext;
 import com.smt.parent.code.filters.token.TokenEntity;
-import com.smt.parent.code.query.QueryCriteriaEntity;
 import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
@@ -54,7 +53,7 @@ public class RoleController {
 	}
 	
 	/**
-	 * 根据角色code和组织机构code, 查询相关的用户集合
+	 * 根据角色code和组织机构code, 查询用户集合
 	 * @param name
 	 * @param request
 	 * @return
@@ -76,9 +75,8 @@ public class RoleController {
 		params.put("orgCodes", orgCodes);
 		params.put("tenantId", TokenContext.get().getTenantId());
 		
-		// 获取动态查询参数实例, 并执行查询
-		QueryCriteriaEntity entity = queryExecutor.parse(request, "ROLE_CODE", "ORG_CODE");
-		return queryExecutor.execute("QueryRoleUserList", params, entity);
+		// 执行查询
+		return queryExecutor.execute("QueryRoleUserList", params, request, "ROLE_CODE", "ORG_CODE");
 	} 
 	
 	/**
