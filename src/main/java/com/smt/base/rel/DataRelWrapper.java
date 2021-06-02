@@ -1,30 +1,30 @@
 package com.smt.base.rel;
 
 import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.filters.token.TokenEntity;
 
 /**
  * 
  * @author DougLei
  */
 public class DataRelWrapper {
-	private Integer flag; // 1表示parent的value在left, 2表示parent的value在right
+	protected TokenEntity tokenEntity;
+	private Integer flag; // 1表示parent的value在left, 0表示parent的value在right
 	private Type parentType;
 	private String parentValue;
 	private Type childType;
 	private String childValues;
-	private String projectCode;
-	private String tenantId;
 	
 	public DataRelWrapper() {
-		this.tenantId = TokenContext.get().getTenantId();
+		this.tokenEntity = TokenContext.get();
 	}
-	public DataRelWrapper(String tenantId) {
-		this.tenantId = tenantId;
+	public DataRelWrapper(TokenEntity tokenEntity) {
+		this.tokenEntity = tokenEntity;
 	}
 	
 	public Integer getFlag() {
 		if(flag == null) 
-			flag = parentType.getLevel() >= childType.getLevel()?1:2;
+			flag = parentType.getLevel() >= childType.getLevel()?1:0;
 		return flag;
 	}
 	public String getParentType() {
@@ -57,16 +57,12 @@ public class DataRelWrapper {
 	public void setChildValues(String childValues) {
 		this.childValues = childValues;
 	}
-	public void setTenantId(String tenantId) {
-		this.tenantId = tenantId;
-	}
 	public String getProjectCode() {
-		return projectCode;
-	}
-	public void setProjectCode(String projectCode) {
-		this.projectCode = projectCode;
+		if(parentType.getLinkedProject() || childType.getLinkedProject())
+			return tokenEntity.getProjectCode();
+		return null;
 	}
 	public String getTenantId() {
-		return tenantId;
+		return tokenEntity.getTenantId();
 	}
 }

@@ -2,8 +2,8 @@
 <mapping-configuration>
 	<sql namespace="DataRel">
 		
-		<!-- 删除Value集合 -->
-		<content name="deleteValues" type="delete">
+		<!-- 删除指定了parentType, parentValue, childType下所有childValue -->
+		<content name="deleteAll" type="delete">
 			<switch>
 				<if test="flag == 1">
 					delete base_data_rel where left_type=#{parentType} and left_value=#{parentValue} and right_type=#{childType} and tenant_id=#{tenantId} 
@@ -12,60 +12,48 @@
 					delete base_data_rel where right_type=#{parentType} and right_value=#{parentValue} and left_type=#{childType} and tenant_id=#{tenantId} 
 				</else>
 			</switch>
-		
-			<switch>
-				<if test="projectCode == null">
-					and project_code is null
-				</if>
-				<else>
-					and project_code=#{projectCode}
-				</else>
-			</switch>
+			<if test="projectCode != null">
+				and project_code= #{projectCode}
+			</if>
 		</content>
 		
-		<!-- 查询Value集合 -->
-		<content name="queryValues" type="select">
+		<!-- 删除指定了parentType, parentValue, childType, childValues的数据 -->
+		<content name="deleteByChildValues" type="delete">
 			<switch>
 				<if test="flag == 1">
-					select right_value from base_data_rel where left_type=#{parentType} and left_value=#{parentValue} and right_type=#{childType} and project_code is null and tenant_id=#{tenantId} 
-					<if test="projectCode != null">
-						union
-						select right_value from base_data_rel where left_type=#{parentType} and left_value=#{parentValue} and right_type=#{childType} and project_code=#{projectCode} and tenant_id=#{tenantId} 
-					</if>
+					delete base_data_rel where left_type=#{parentType} and left_value=#{parentValue} and right_type=#{childType} and tenant_id=#{tenantId} and right_value 
 				</if>
 				<else>
-					select left_value from base_data_rel where right_type=#{parentType} and right_value=#{parentValue} and left_type=#{childType} and project_code is null and tenant_id=#{tenantId} 
-					<if test="projectCode != null">
-						union
-						select left_value from base_data_rel where right_type=#{parentType} and right_value=#{parentValue} and left_type=#{childType} and project_code=#{projectCode} and tenant_id=#{tenantId} 
-					</if>
+					delete base_data_rel where right_type=#{parentType} and right_value=#{parentValue} and left_type=#{childType} and tenant_id=#{tenantId} and left_value 
 				</else>
 			</switch>
+			<foreach collection="childValues.split(',')" alias="childValue" open="in (" separator="," close=") ">
+				#{childValue}
+			</foreach> 
+			<if test="projectCode != null">
+				and project_code= #{projectCode} 
+			</if>
 		</content>
 		
-		<!-- 删除 -->
-		<content name="delete" type="delete">
+		<!-- 查询指定了parentType, parentValue, childType下所有childValue集合 -->
+		<content name="queryChildValues" type="select">
 			<switch>
 				<if test="flag == 1">
-					delete base_data_rel where left_type=#{parentType} and left_value=#{parentValue} and right_type=#{childType} and tenant_id=#{tenantId} 
-					<foreach collection="childValues.split(',')" alias="childValue" open="and right_value in (" separator="," close=")">
-						#{childValue}
-					</foreach> 
+					select right_value from base_data_rel where left_type=#{wrapper.parentType} and left_value=#{wrapper.parentValue} and right_type=#{wrapper.childType} and tenant_id=#{wrapper.tenantId} 
 				</if>
 				<else>
-					delete base_data_rel where right_type=#{parentType} and right_value=#{parentValue} and left_type=#{childType} and tenant_id=#{tenantId} 
-					<foreach collection="childValues.split(',')" alias="childValue" open="and left_value in (" separator="," close=")">
-						#{childValue}
-					</foreach> 
+					select left_value from base_data_rel where right_type=#{wrapper.parentType} and right_value=#{wrapper.parentValue} and left_type=#{wrapper.childType} and tenant_id=#{wrapper.tenantId} 
 				</else>
 			</switch>
-		
 			<switch>
-				<if test="projectCode == null">
-					and project_code is null
+				<if test="parentProjectCodes == null">
+					and project_code= #{wrapper.projectCode} 
 				</if>
 				<else>
-					and project_code=#{projectCode}
+					and project_code in (#{wrapper.projectCode},
+					<foreach collection="parentProjectCodes" alias="code" separator="," close=")">
+						#{code}
+					</foreach> 
 				</else>
 			</switch>
 		</content>

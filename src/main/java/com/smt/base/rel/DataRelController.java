@@ -21,7 +21,7 @@ public class DataRelController {
 	private DataRelService service;
 	
 	/**
-	 * 增删改数据关联关系
+	 * 操作(增删改)数据关联关系
 	 * @param wrapper
 	 * @return
 	 */
@@ -30,17 +30,6 @@ public class DataRelController {
 	public Response operate(@RequestBody DataRelWrapper wrapper) {
 		service.operate(wrapper);
 		return new Response(wrapper);
-	}
-	
-	/**
-	 * 查询Value集合
-	 * @param wrapper
-	 * @return
-	 */
-	@LoggingResponse(loggingBody=false)
-	@RequestMapping(value="/value/query", method=RequestMethod.POST)
-	public Response queryValues(@RequestBody DataRelWrapper wrapper) {
-		return new Response(service.queryValues(wrapper));
 	}
 	
 	/**
@@ -65,5 +54,16 @@ public class DataRelController {
 	public Response delete(@RequestBody DataRelWrapper wrapper) {
 		service.delete(wrapper);
 		return new Response(wrapper);
+	}
+	
+	/**
+	 * 查询Value集合
+	 * @param wrapper
+	 * @return
+	 */
+	@LoggingResponse(loggingBody=false)
+	@RequestMapping(value="/value/query", method=RequestMethod.POST)
+	public Response queryValues(@RequestBody DataRelWrapper wrapper) {
+		return new Response(service.queryValues(wrapper));
 	}
 }

@@ -11,6 +11,7 @@
 						and user_.is_deleted=0
 					</if>
 					<if test="!queryAdmin">
+						<!-- TODO 应该去租户表查询, 获取对应租户下默认的那个管理员id; 这里目前写成固定值 -->
 						and user_.id != '200ceb26807d6bf99fd6f4f0d1ca54d40001'
 					</if>
 		</content>

@@ -89,11 +89,9 @@ public class AuthService {
 			if(Integer.parseInt(SessionContext.getSQLSession().uniqueQuery_("Auth", "query4UserIdAndProjectCodes", token)[0].toString()) == 0)
 				return new Response(entity, null, "无权登录系统, 请联系管理员", "smt.base.login.fail.no.right");
 			
-			DataRelWrapper wrapper = new DataRelWrapper(entity.getTenantId());
+			DataRelWrapper wrapper = new DataRelWrapper(token);
 			wrapper.setParentTypeInstance(Type.USER_ID);
 			wrapper.setParentValue(account.getUserId());
-			wrapper.setChildTypeInstance(Type.PROJECT_CODE);
-			wrapper.setProjectCode(entity.getProjectCode());
 			// 查询用户所属的组织机构
 			wrapper.setChildTypeInstance(Type.ORG_CODE);
 			token.setOrgs(dataRelService.queryValues(wrapper));

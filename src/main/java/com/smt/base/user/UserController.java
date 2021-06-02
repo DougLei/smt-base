@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.query.QueryCriteria;
+import com.smt.parent.code.query.QueryCriteriaEntity;
 import com.smt.parent.code.query.QueryExecutor;
 import com.smt.parent.code.response.Response;
 import com.smt.parent.code.spring.web.LoggingResponse;
@@ -64,13 +66,13 @@ public class UserController {
 	
 	/**
 	 * 用户查询(流程服务)
-	 * @param request
+	 * @param entity
 	 * @return
 	 */
 	@LoggingResponse(loggingBody=false)
-	@RequestMapping(value="/query4JBPM", method=RequestMethod.GET)
-	public Response query4JBPM(HttpServletRequest request) {
-		return queryExecutor.execute("QueryUserList4JBPM", TokenContext.get().getTenantId(), request);
+	@RequestMapping(value="/query4JBPM", method=RequestMethod.POST)
+	public Response query4JBPM(@QueryCriteria QueryCriteriaEntity entity) {
+		return queryExecutor.execute("QueryUserList4JBPM", TokenContext.get(), entity);
 	}
 	
 	/**

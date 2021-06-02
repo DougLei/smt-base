@@ -16,6 +16,7 @@ import com.smt.base.rel.DataRelService;
 import com.smt.base.rel.DataRelWrapper;
 import com.smt.base.rel.Type;
 import com.smt.parent.code.filters.token.TokenContext;
+import com.smt.parent.code.filters.token.TokenEntity;
 import com.smt.parent.code.response.Response;
 
 /**
@@ -41,12 +42,13 @@ public class UserService {
 				Arrays.asList(account.getLoginName(), account.getTenantId())) != null;
 	}
 	// 给用户设置所属的组织机构
-	private void setOrg2User(String userId, String orgCode, String tenantId) {
-		Object[] org =SessionContext.getSqlSession().uniqueQuery_("select is_deleted from base_org where code=? and tenant_id=?", Arrays.asList(orgCode, tenantId));
+	private void setOrg2User(String userId, String orgCode) {
+		TokenEntity tokenEntity = TokenContext.get();
+		Object[] org =SessionContext.getSqlSession().uniqueQuery_("select is_deleted from base_org where code=? and tenant_id=?", Arrays.asList(orgCode, tokenEntity.getTenantId()));
 		if(org== null || "1".equals(org[0].toString()))
 			throw new SmtBaseException("添加用户失败, 不存在编码为["+orgCode+"]的组织机构");
 		
-		DataRelWrapper wrapper = new DataRelWrapper(tenantId);
+		DataRelWrapper wrapper = new DataRelWrapper(tokenEntity);
 		wrapper.setParentTypeInstance(Type.USER_ID);
 		wrapper.setParentValue(userId);
 		wrapper.setChildTypeInstance(Type.ORG_CODE);
@@ -76,7 +78,7 @@ public class UserService {
 		
 		// 给用户设置所属的组织机构
 		if(builder.getOrgCode() != null) 
-			setOrg2User(user.getId(), builder.getOrgCode(), user.getTenantId());
+			setOrg2User(user.getId(), builder.getOrgCode());
 			
 		// 给用户设置(默认)可登录的系统
 		if(builder.getProjectCode() != null) {
@@ -84,7 +86,7 @@ public class UserService {
 			if(project== null || "3".equals(project[0].toString()))
 				throw new SmtBaseException("添加用户失败, 不存在编码为["+builder.getProjectCode()+"]的项目");
 			
-			DataRelWrapper wrapper = new DataRelWrapper(user.getTenantId());
+			DataRelWrapper wrapper = new DataRelWrapper(TokenContext.get());
 			wrapper.setParentTypeInstance(Type.USER_ID);
 			wrapper.setParentValue(user.getId());
 			wrapper.setChildTypeInstance(Type.PROJECT_CODE);
@@ -113,7 +115,7 @@ public class UserService {
 		
 		// 给用户设置所属的组织机构
 		if(builder.getOrgCode() != null) 
-			setOrg2User(user.getId(), builder.getOrgCode(), user.getTenantId());
+			setOrg2User(user.getId(), builder.getOrgCode());
 		
 		SessionContext.getTableSession().update(user);
 		return new Response(builder);

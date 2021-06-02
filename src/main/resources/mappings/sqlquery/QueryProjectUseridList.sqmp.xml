@@ -3,7 +3,7 @@
 	<!-- 使用指定的userId集合, (筛选)查询出和指定项目code有关联的userId集合 -->
 	<sql-query name="QueryProjectUseridList">
 		<content>
-			select left_value from base_data_rel where left_type='USER_ID' and right_type='PROJECT_CODE' and right_value=#{code} and tenant_id= #{tenantId} and 
+			select left_value from base_data_rel where left_type='USER_ID' and right_type='PROJECT_CODE' and right_value=#{code} and project_code is null and tenant_id= #{tenantId} and 
 			<foreach collection="userIds" alias="userId" open="left_value in (" separator="," close=")">
 				#{userId.ID}
 			</foreach> 

@@ -6,7 +6,7 @@
 			select user_.*, case user_.sex when 1 then '男' when 2 then '女' else 'ERR' end sex_text, org_.name org_name from base_data_rel rel
 				left join base_user user_ on (user_.id = rel.left_value)
 				left join base_org org_ on (org_.code= rel.right_value and rel.right_type='ORG_CODE' and rel.tenant_id=#{tenantId})
-					where rel.left_type='USER_ID' and rel.right_type='ORG_CODE' and  
+					where rel.left_type='USER_ID' and rel.right_type='ORG_CODE' and rel.project_code is null and 
 					<foreach collection="codes" alias="code" open="rel.right_value in (" separator="," close=")">
 						#{code}
 					</foreach> 
