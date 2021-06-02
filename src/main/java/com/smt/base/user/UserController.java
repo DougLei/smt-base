@@ -39,11 +39,12 @@ public class UserController {
 	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value="/query", method=RequestMethod.GET)
 	public Response query(HttpServletRequest request) {
-		Map<String, Object> params = new HashMap<String, Object>(4);
+		Map<String, Object> params = new HashMap<String, Object>(8);
 		params.put("queryDeleted", "true".equalsIgnoreCase(request.getParameter("queryDeleted")));
+		params.put("queryAdmin", "true".equalsIgnoreCase(request.getParameter("queryAdmin")));
 		params.put("tenantId", TokenContext.get().getTenantId());
 		
-		return queryExecutor.execute("QueryUserList", params, request, "queryDeleted");
+		return queryExecutor.execute("QueryUserList", params, request, "queryDeleted", "queryAdmin");
 	}
 	
 	/**
