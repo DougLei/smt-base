@@ -1,9 +1,7 @@
 package com.smt.base.dict;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,10 +41,6 @@ public class DictController {
 	@LoggingResponse(loggingBody=false)
 	@RequestMapping(value="/query", method=RequestMethod.GET)
 	public Response query(HttpServletRequest request) {
-		Map<String, Object> params = new HashMap<String, Object>(4);
-		params.put("queryDeleted", "true".equalsIgnoreCase(request.getParameter("queryDeleted")));
-		params.put("token", TokenContext.get());
-		
 		return queryExecutor.execute("QueryDictList", TokenContext.get(), request, "queryDeleted");
 	}
 	

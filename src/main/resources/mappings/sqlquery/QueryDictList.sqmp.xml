@@ -3,21 +3,18 @@
 	<!-- 查询数据字典 -->
 	<sql-query name="QueryDictList">
 		<content>
-			select * from base_dict where tenant_id= #{token.tenantId} and project_code 
+			select * from base_dict where tenant_id= #{tenantId} and project_code 
 			<switch>
-				<if test="token.parentProjectCodes == null">
-					=#{token.projectCode}
+				<if test="parentProjectCodes == null">
+					=#{projectCode}
 				</if>
 				<else>
-					in (#{token.projectCode},
-					<foreach collection="token.parentProjectCodes" alias="code" separator="," close=")">
+					in (#{projectCode},
+					<foreach collection="parentProjectCodes" alias="code" separator="," close=")">
 						#{code}
 					</foreach> 
 				</else>
 			</switch>
-			<if test="!queryDeleted">
-				and is_deleted=0
-			</if>
 		</content>
 		
 		<parameters>
