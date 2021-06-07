@@ -38,7 +38,7 @@
 		<!-- 查询指定了parentType, parentValue, childType下所有childValue集合 -->
 		<content name="queryChildValues" type="select">
 			<switch>
-				<if test="flag == 1">
+				<if test="wrapper.flag == 1">
 					select right_value from base_data_rel where left_type=#{wrapper.parentType} and left_value=#{wrapper.parentValue} and right_type=#{wrapper.childType} and tenant_id=#{wrapper.tenantId} 
 				</if>
 				<else>
