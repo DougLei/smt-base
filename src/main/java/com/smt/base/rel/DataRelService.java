@@ -11,7 +11,6 @@ import com.douglei.orm.context.SessionContext;
 import com.douglei.orm.context.Transaction;
 import com.douglei.orm.context.TransactionComponent;
 import com.douglei.tools.StringUtil;
-import com.smt.base.SmtBaseException;
 import com.smt.parent.code.filters.token.TokenContext;
 
 /**
@@ -84,15 +83,12 @@ public class DataRelService {
 	}
 	
 	/**
-	 * 查询Value集合(只查询linkedProject=true的关联关系, linkedProject=false时会返回null)
+	 * 查询Value集合
 	 * @param wrapper
 	 * @return 没查到数据时会返回null
 	 */
 	@Transaction(propagationBehavior=PropagationBehavior.SUPPORTS)
 	public List<String> queryValues(DataRelWrapper wrapper) {
-		if(wrapper.getProjectCode() == null) 
-			throw new SmtBaseException("parent="+wrapper.getParentType()+", child="+wrapper.getChildType()+", 不支持使用queryValues()方法进行查询");
-		
 		Map<String, Object> params = new HashMap<String, Object>(4);
 		params.put("wrapper", wrapper);
 		params.put("parentProjectCodes", wrapper.tokenEntity.getParentProjectCodes());

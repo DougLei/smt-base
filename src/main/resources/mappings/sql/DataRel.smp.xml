@@ -45,17 +45,19 @@
 					select left_value from base_data_rel where right_type=#{wrapper.parentType} and right_value=#{wrapper.parentValue} and left_type=#{wrapper.childType} and tenant_id=#{wrapper.tenantId} 
 				</else>
 			</switch>
-			<switch>
-				<if test="parentProjectCodes == null">
-					and project_code= #{wrapper.projectCode} 
-				</if>
-				<else>
-					and project_code in (#{wrapper.projectCode},
-					<foreach collection="parentProjectCodes" alias="code" separator="," close=")">
-						#{code}
-					</foreach> 
-				</else>
-			</switch>
+			<if test="wrapper.projectCode != null">
+				 <switch>
+					<if test="parentProjectCodes == null">
+						and project_code= #{wrapper.projectCode} 
+					</if>
+					<else>
+						and project_code in (#{wrapper.projectCode},
+						<foreach collection="parentProjectCodes" alias="code" separator="," close=")">
+							#{code}
+						</foreach> 
+					</else>
+				</switch>
+			</if>
 		</content>
 		
 	</sql>
